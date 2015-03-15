@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MarekOtulakowski")]
 [assembly: AssemblyProduct("BackupMyMail.Lib")]
-[assembly: AssemblyCopyright("Copyright © MarekOtulakowski 2012")]
-[assembly: AssemblyTrademark("http://backupmymail.codeplex.com")]
+[assembly: AssemblyCopyright("Copyright © MarekOtulakowski 2012-2015")]
+[assembly: AssemblyTrademark("https://github.com/MarekOtulakowski/backupmymail")]
 [assembly: AssemblyCulture("")]
 
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 
 
 
-[assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyFileVersion("1.3.1.0")]
+[assembly: AssemblyVersion("1.3.2.0")]
+[assembly: AssemblyFileVersion("1.3.2.0")]

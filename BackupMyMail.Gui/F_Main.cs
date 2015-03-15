@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Xml;
 using BackupMyMail.Lib;
 using System.Threading;
+using System.Reflection;
 
 namespace BackupMyMail.Gui
 {
@@ -35,12 +36,40 @@ namespace BackupMyMail.Gui
         private Thread procCopy;
         private bool copyState = false;
         private bool notUseVss = false;
+        private bool autostart = false;
+        private string scheduledTaskName = "BackupMyMail";
+        private bool minimalizeAfterStart = false;
+
+        public F_Main(string[] args)
+        {
+            if (args.Length > 0)
+            {
+                for (int i = 0; i < args.Length; i++)
+                {
+                    if (args[i].ToLower() == "/min")
+                    {
+                        minimalizeAfterStart = true;
+                    }
+                }
+            }
+
+            InitializeComponent();
+
+            executeProgramFolder = Path.GetDirectoryName(Application.ExecutablePath);
+            manager = new Manager(executeProgramFolder);
+            AfterStart();
+        }
 
         public F_Main()
         {
             InitializeComponent();
             executeProgramFolder = Path.GetDirectoryName(Application.ExecutablePath);
             manager = new Manager(executeProgramFolder);
+            AfterStart();
+        }
+
+        private void AfterStart()
+        { 
             timer = new System.Windows.Forms.Timer() { Interval = 1000, Enabled = true };
             timer.Tick += timer_Tick;
             timer.Start();
@@ -311,6 +340,12 @@ namespace BackupMyMail.Gui
 
         private void F_Main_Load(object sender, EventArgs e)
         {
+            if (minimalizeAfterStart)
+                this.WindowState = FormWindowState.Minimized;
+
+            Version version = Assembly.GetEntryAssembly().GetName().Version;
+            this.Text = this.Text + version.ToString();
+
             ReadXML();
 
             TB_pathToLogFile.Text = pathToLog;
@@ -431,6 +466,120 @@ namespace BackupMyMail.Gui
             SaveXML();
         }
 
+        private bool IsSetAutostartApp()
+        {
+            string tbl = string.Empty;
+
+            try
+            {
+                Process p = new Process();
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.FileName = "SCHTASKS.exe";
+                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                p.StartInfo.Arguments = String.Format("/Query /S {0} /TN {1} /FO TABLE /NH", Environment.MachineName, scheduledTaskName);
+
+                p.Start();
+                // Read the error stream
+                string error = p.StandardError.ReadToEnd();
+
+                //Read the output string
+                p.StandardOutput.ReadLine();
+                tbl = p.StandardOutput.ReadToEnd();
+
+                //Then wait for it to finish
+                p.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error reading is task exist", "BackupMyMail", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            if (string.IsNullOrEmpty(tbl))
+                return false;
+            else
+                return true;
+        }
+
+        private void DeleteAutostartTask()
+        {
+            if (!IsSetAutostartApp())
+                return;
+
+            try
+            {
+                Process p = new Process();
+                if (System.Environment.OSVersion.Version.Major >= 6)
+                    p.StartInfo.Verb = "runas";
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.FileName = "SCHTASKS.exe";
+                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                p.StartInfo.Arguments = String.Format("/delete /TN {0} /f",
+                                        scheduledTaskName);
+
+                p.Start();
+                // Read the error stream
+                string error = p.StandardError.ReadToEnd();
+
+                //Read the output string
+                p.StandardOutput.ReadLine();
+                string output = p.StandardOutput.ReadToEnd();
+
+                //Then wait for it to finish
+                p.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error remove autostart task\n" + ex.Message, scheduledTaskName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void CreateAutostartTask()
+        {
+            if (IsSetAutostartApp())
+                return;
+
+            try
+            {
+                Process p = new Process();
+                if (System.Environment.OSVersion.Version.Major >= 6)
+                    p.StartInfo.Verb = "runas";
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.FileName = "SCHTASKS.exe";
+                p.StartInfo.RedirectStandardError = true;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                p.StartInfo.Arguments = String.Format("/create /sc onlogon /tn {0} /rl highest /tr \"\\\"{1}\\\" {2}\"",
+                                        scheduledTaskName,
+                                        Assembly.GetEntryAssembly().Location,
+                                        "/min"); //minimalize window
+
+                p.Start();
+                // Read the error stream
+                string error = p.StandardError.ReadToEnd();
+
+                //Read the output string
+                p.StandardOutput.ReadLine();
+                string output = p.StandardOutput.ReadToEnd();
+
+                //Then wait for it to finish
+                p.WaitForExit();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error to add autostart task\n" + ex.Message, scheduledTaskName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void SaveXML()
         {
             try
@@ -459,6 +608,17 @@ namespace BackupMyMail.Gui
                 bool notUseVss = false;
                 if (CB_notUseVss.Checked)
                     notUseVss = true;
+
+                if (CB_autoStartApp.Checked)
+                {
+                    CreateAutostartTask();
+                    autostart = true;
+                }
+                else
+                {
+                    DeleteAutostartTask();
+                    autostart = false;
+                }
 
                 using (var textWriter = new XmlTextWriter(pathToSettings, null))
                 {
@@ -499,8 +659,13 @@ namespace BackupMyMail.Gui
                     textWriter.WriteWhitespace("   ");
                     textWriter.WriteStartElement("CopyRegistrySettings", copyRegistrySettings.ToString());
                     textWriter.WriteEndElement();
+                    textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
                     textWriter.WriteStartElement("NotUseVss", notUseVss.ToString());
+                    textWriter.WriteEndElement();
+                    textWriter.WriteWhitespace(Environment.NewLine);
+                    textWriter.WriteWhitespace("   ");
+                    textWriter.WriteStartElement("Autostart", autostart.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteEndDocument();
@@ -577,6 +742,14 @@ namespace BackupMyMail.Gui
                             {
                                 pathToLog = reader.NamespaceURI;
                             }
+                            if (String.Compare(reader.Name, "Autostart", false) == 0)
+                            {
+                                autostart = bool.Parse(reader.NamespaceURI);
+                                if (autostart)
+                                    CB_autoStartApp.Checked = true;
+                                else
+                                    CB_autoStartApp.Checked = false;
+                            }
                         }
                     }
                     reader.Close();
@@ -630,7 +803,7 @@ namespace BackupMyMail.Gui
 
         private void LL_homeWebsite_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://backupmymail.codeplex.com");
+            Process.Start("https://github.com/MarekOtulakowski/backupmymail");
         }
 
         private void B_addSchedule_Click(object sender, EventArgs e)

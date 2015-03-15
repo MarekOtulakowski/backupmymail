@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(F_Main));
             this.TP_others = new System.Windows.Forms.TabPage();
+            this.L_backupRegistryInfo = new System.Windows.Forms.Label();
             this.CB_notUseVss = new System.Windows.Forms.CheckBox();
             this.CB_copyRegistrySettings = new System.Windows.Forms.CheckBox();
             this.B_browseLogFile = new System.Windows.Forms.Button();
@@ -75,6 +76,8 @@
             this.TB_pathToPstInfo = new System.Windows.Forms.TextBox();
             this.B_readPstInfo = new System.Windows.Forms.Button();
             this.GB_restorePstS = new System.Windows.Forms.GroupBox();
+            this.L_copyInfoAdd2 = new System.Windows.Forms.Label();
+            this.L_copyInfoAdd = new System.Windows.Forms.Label();
             this.B_terminateCopy = new System.Windows.Forms.Button();
             this.L_copyState = new System.Windows.Forms.Label();
             this.B_restoreDefaultPstAndArchivePstS = new System.Windows.Forms.Button();
@@ -88,9 +91,7 @@
             this.SWTSMI_backupNow = new System.Windows.Forms.ToolStripMenuItem();
             this.SWTSMI_separate1 = new System.Windows.Forms.ToolStripSeparator();
             this.SWTSMI_closeProgram = new System.Windows.Forms.ToolStripMenuItem();
-            this.L_copyInfoAdd = new System.Windows.Forms.Label();
-            this.L_copyInfoAdd2 = new System.Windows.Forms.Label();
-            this.L_backupRegistryInfo = new System.Windows.Forms.Label();
+            this.CB_autoStartApp = new System.Windows.Forms.CheckBox();
             this.TP_others.SuspendLayout();
             this.TP_backup.SuspendLayout();
             this.TC_Main.SuspendLayout();
@@ -108,6 +109,7 @@
             // 
             // TP_others
             // 
+            this.TP_others.Controls.Add(this.CB_autoStartApp);
             this.TP_others.Controls.Add(this.L_backupRegistryInfo);
             this.TP_others.Controls.Add(this.CB_notUseVss);
             this.TP_others.Controls.Add(this.CB_copyRegistrySettings);
@@ -126,10 +128,19 @@
             this.TP_others.Text = "Others";
             this.TP_others.UseVisualStyleBackColor = true;
             // 
+            // L_backupRegistryInfo
+            // 
+            this.L_backupRegistryInfo.AutoSize = true;
+            this.L_backupRegistryInfo.Location = new System.Drawing.Point(15, 264);
+            this.L_backupRegistryInfo.Name = "L_backupRegistryInfo";
+            this.L_backupRegistryInfo.Size = new System.Drawing.Size(376, 13);
+            this.L_backupRegistryInfo.TabIndex = 17;
+            this.L_backupRegistryInfo.Text = "\"Backup registy\" copy specyfic path in MS Registy. Other in MS Outlook 2013";
+            // 
             // CB_notUseVss
             // 
             this.CB_notUseVss.AutoSize = true;
-            this.CB_notUseVss.Location = new System.Drawing.Point(18, 135);
+            this.CB_notUseVss.Location = new System.Drawing.Point(18, 129);
             this.CB_notUseVss.Name = "CB_notUseVss";
             this.CB_notUseVss.Size = new System.Drawing.Size(341, 17);
             this.CB_notUseVss.TabIndex = 16;
@@ -142,7 +153,7 @@
             this.CB_copyRegistrySettings.AutoSize = true;
             this.CB_copyRegistrySettings.Checked = true;
             this.CB_copyRegistrySettings.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CB_copyRegistrySettings.Location = new System.Drawing.Point(18, 104);
+            this.CB_copyRegistrySettings.Location = new System.Drawing.Point(18, 100);
             this.CB_copyRegistrySettings.Name = "CB_copyRegistrySettings";
             this.CB_copyRegistrySettings.Size = new System.Drawing.Size(367, 17);
             this.CB_copyRegistrySettings.TabIndex = 15;
@@ -191,7 +202,7 @@
             // CB_minimalizeWindowOnStartup
             // 
             this.CB_minimalizeWindowOnStartup.AutoSize = true;
-            this.CB_minimalizeWindowOnStartup.Location = new System.Drawing.Point(18, 75);
+            this.CB_minimalizeWindowOnStartup.Location = new System.Drawing.Point(18, 71);
             this.CB_minimalizeWindowOnStartup.Name = "CB_minimalizeWindowOnStartup";
             this.CB_minimalizeWindowOnStartup.Size = new System.Drawing.Size(197, 17);
             this.CB_minimalizeWindowOnStartup.TabIndex = 4;
@@ -201,7 +212,7 @@
             // CB_afterBackupCloseComputer
             // 
             this.CB_afterBackupCloseComputer.AutoSize = true;
-            this.CB_afterBackupCloseComputer.Location = new System.Drawing.Point(18, 44);
+            this.CB_afterBackupCloseComputer.Location = new System.Drawing.Point(18, 42);
             this.CB_afterBackupCloseComputer.Name = "CB_afterBackupCloseComputer";
             this.CB_afterBackupCloseComputer.Size = new System.Drawing.Size(235, 17);
             this.CB_afterBackupCloseComputer.TabIndex = 3;
@@ -610,6 +621,24 @@
             this.GB_restorePstS.TabStop = false;
             this.GB_restorePstS.Text = "Restore Pst(s)";
             // 
+            // L_copyInfoAdd2
+            // 
+            this.L_copyInfoAdd2.AutoSize = true;
+            this.L_copyInfoAdd2.Location = new System.Drawing.Point(6, 93);
+            this.L_copyInfoAdd2.Name = "L_copyInfoAdd2";
+            this.L_copyInfoAdd2.Size = new System.Drawing.Size(371, 13);
+            this.L_copyInfoAdd2.TabIndex = 10;
+            this.L_copyInfoAdd2.Text = "If you want restore account settings (password etc.) run *.reg file from backup";
+            // 
+            // L_copyInfoAdd
+            // 
+            this.L_copyInfoAdd.AutoSize = true;
+            this.L_copyInfoAdd.Location = new System.Drawing.Point(6, 80);
+            this.L_copyInfoAdd.Name = "L_copyInfoAdd";
+            this.L_copyInfoAdd.Size = new System.Drawing.Size(262, 13);
+            this.L_copyInfoAdd.TabIndex = 9;
+            this.L_copyInfoAdd.Text = "Restore buttons above, restores only choosed pst files";
+            // 
             // B_terminateCopy
             // 
             this.B_terminateCopy.Location = new System.Drawing.Point(235, 50);
@@ -721,32 +750,18 @@
             this.SWTSMI_closeProgram.Text = "Close Program";
             this.SWTSMI_closeProgram.Click += new System.EventHandler(this.SWTSMI_closeProgram_Click);
             // 
-            // L_copyInfoAdd
+            // CB_autoStartApp
             // 
-            this.L_copyInfoAdd.AutoSize = true;
-            this.L_copyInfoAdd.Location = new System.Drawing.Point(6, 80);
-            this.L_copyInfoAdd.Name = "L_copyInfoAdd";
-            this.L_copyInfoAdd.Size = new System.Drawing.Size(262, 13);
-            this.L_copyInfoAdd.TabIndex = 9;
-            this.L_copyInfoAdd.Text = "Restore buttons above, restores only choosed pst files";
-            // 
-            // L_copyInfoAdd2
-            // 
-            this.L_copyInfoAdd2.AutoSize = true;
-            this.L_copyInfoAdd2.Location = new System.Drawing.Point(6, 93);
-            this.L_copyInfoAdd2.Name = "L_copyInfoAdd2";
-            this.L_copyInfoAdd2.Size = new System.Drawing.Size(371, 13);
-            this.L_copyInfoAdd2.TabIndex = 10;
-            this.L_copyInfoAdd2.Text = "If you want restore account settings (password etc.) run *.reg file from backup";
-            // 
-            // L_backupRegistryInfo
-            // 
-            this.L_backupRegistryInfo.AutoSize = true;
-            this.L_backupRegistryInfo.Location = new System.Drawing.Point(15, 264);
-            this.L_backupRegistryInfo.Name = "L_backupRegistryInfo";
-            this.L_backupRegistryInfo.Size = new System.Drawing.Size(376, 13);
-            this.L_backupRegistryInfo.TabIndex = 17;
-            this.L_backupRegistryInfo.Text = "\"Backup registy\" copy specyfic path in MS Registy. Other in MS Outlook 2013";
+            this.CB_autoStartApp.AutoSize = true;
+            this.CB_autoStartApp.Checked = true;
+            this.CB_autoStartApp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CB_autoStartApp.Location = new System.Drawing.Point(18, 158);
+            this.CB_autoStartApp.Name = "CB_autoStartApp";
+            this.CB_autoStartApp.Size = new System.Drawing.Size(194, 17);
+            this.CB_autoStartApp.TabIndex = 18;
+            this.CB_autoStartApp.Tag = "";
+            this.CB_autoStartApp.Text = "Autostart application after user login";
+            this.CB_autoStartApp.UseVisualStyleBackColor = true;
             // 
             // F_Main
             // 
@@ -757,7 +772,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "F_Main";
-            this.Text = "Backup my mail in Microsoft Outlook - 1.3.1";
+            this.Text = "Backup my mail for MS Outlook - ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.F_Main_FormClosing);
             this.Load += new System.EventHandler(this.F_Main_Load);
             this.Resize += new System.EventHandler(this.F_Main_Resize);
@@ -848,6 +863,7 @@
         private System.Windows.Forms.Label L_copyInfoAdd2;
         private System.Windows.Forms.Label L_copyInfoAdd;
         private System.Windows.Forms.Label L_backupRegistryInfo;
+        private System.Windows.Forms.CheckBox CB_autoStartApp;
 
 
     }

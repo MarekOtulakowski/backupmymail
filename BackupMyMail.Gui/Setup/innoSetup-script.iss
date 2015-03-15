@@ -7,18 +7,22 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{A3D4DCAC-1A90-496D-B2F3-2CA59AF02CA1}
 AppName=BackupMyMail
-AppVersion=1.3.1
+AppVersion=1.3.2.0
+AppVerName=BackupMyMail 1.3.2.0
 AppPublisher=MarekOtulakowski
-AppPublisherURL=http://backupmymail.codeplex.com/
-AppSupportURL=http://backupmymail.codeplex.com/
-AppUpdatesURL=http://backupmymail.codeplex.com/
+AppPublisherURL=https://github.com/MarekOtulakowski/BackupMyMail
+AppSupportURL=https://github.com/MarekOtulakowski/BackupMyMail
+AppUpdatesURL=https://github.com/MarekOtulakowski/BackupMyMail
 DefaultDirName=C:\Program Files\BackupMyMail
 DefaultGroupName=BackupMyMail
 AllowNoIcons=yes
-LicenseFile=C:\projects\VS2010\backupmymail\BackupMyMail.Gui\License.txt
+LicenseFile=C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\License.txt
 OutputDir=C:\Users\Marek\Desktop
-OutputBaseFilename=setup-backupmymail-v1.3.1
-SetupIconFile=C:\projects\VS2010\backupmymail\BackupMyMail.Gui\Setup\SetupIcon.ico
+OutputBaseFilename=setup-backupmymail-v1.3.2
+VersionInfoVersion=1.3.2.0
+VersionInfoCopyright=Copyright © MarekOtulakowski 2011-2015
+VersionInfoDescription=Installer for BackupMyMail
+SetupIconFile=C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup\SetupIcon.ico
 Compression=lzma
 SolidCompression=yes
 UninstallDisplayIcon={app}\Uninstaller.ico
@@ -27,23 +31,23 @@ UninstallDisplayIcon={app}\Uninstaller.ico
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Lib.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\bin\Debug\HoboCopy-x64.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\bin\Debug\HoboCopy-x86.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\bin\Debug\HoboCopy-x86-XP.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\License.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\projects\VS2010\backupmymail\BackupMyMail.Gui\Setup\Uninstaller.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Lib.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\HoboCopy-x64.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\HoboCopy-x86.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\HoboCopy-x86-XP.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\License.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup\Uninstaller.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{group}\BackupMyMail"; Filename: "{app}\BackupMyMail.Gui.exe"
-Name: "{group}\{cm:ProgramOnTheWeb,BackupMyMail}"; Filename: "http://backupmymail.codeplex.com/"
+Name: "{group}\{cm:ProgramOnTheWeb,BackupMyMail}"; Filename: "https://github.com/MarekOtulakowski/BackupMyMail"
 Name: "{group}\{cm:UninstallProgram,BackupMyMail}"; Filename: "{uninstallexe}"; IconFilename: "{app}\Uninstaller.ico"
 Name: "{commondesktop}\BackupMyMail"; Filename: "{app}\BackupMyMail.Gui.exe"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\BackupMyMail"; Filename: "{app}\BackupMyMail.Gui.exe"; Tasks: quicklaunchicon
