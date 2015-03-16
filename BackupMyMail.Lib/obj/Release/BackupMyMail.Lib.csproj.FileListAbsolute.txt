@@ -1,0 +1,6 @@
+C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\bin\Release\BackupMyMail.Lib.dll
+C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\bin\Release\BackupMyMail.Lib.pdb
+C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\obj\Release\BackupMyMail.Lib.csproj.ResolveComReference.cache
+C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\obj\Release\BackupMyMail.Lib.dll
+C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\obj\Release\BackupMyMail.Lib.pdb
+C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\obj\Release\BackupMyMail.Lib.csprojResolveAssemblyReference.cache
