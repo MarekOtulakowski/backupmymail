@@ -37,7 +37,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>BackupMyMail.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>BackupMyMail.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -70,7 +70,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BackupMyMail.pfx" />
+    <None Include="BackupMyMail.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

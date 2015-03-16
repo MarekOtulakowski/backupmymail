@@ -27,11 +27,15 @@ namespace BackupMyMail.Lib
         private List<string> listOrgLocationPst;
         private string OutlookVersion;
         public bool NotUseVSSandHobocopy = false;
+        //private string username;
+        //private System.Security.SecureString password;
 
-        public Manager(string _executeFolderPath)
+        public Manager(string _executeFolderPath)//, string _username, System.Security.SecureString _password)
         {
             executeFolderPath = _executeFolderPath;
             listBackupPst = new List<string>();
+            //username = _username;
+            //password = _password;
         }
 
         private static int GetMajorVersion(string _path)
@@ -516,6 +520,8 @@ namespace BackupMyMail.Lib
                 {
                     psi.UseShellExecute = true;
                 }
+                //psi.UserName = username;
+                //psi.Password = password;
 
                 psi.CreateNoWindow = true;
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
@@ -596,6 +602,8 @@ namespace BackupMyMail.Lib
                 {
                     psiRegistry.UseShellExecute = true;
                 }
+                //psiRegistry.UserName = username;
+                //psiRegistry.Password = password;
                 psiRegistry.CreateNoWindow = true;
                 psiRegistry.WindowStyle = ProcessWindowStyle.Hidden;
                 System.Diagnostics.Process pRegistry = Process.Start(psiRegistry);
@@ -698,6 +706,8 @@ namespace BackupMyMail.Lib
                 {
                     psi.UseShellExecute = true;
                 }
+                //psi.UserName = username;
+                //psi.Password = password;
                 psi.CreateNoWindow = true;
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
                 p = Process.Start(psi);

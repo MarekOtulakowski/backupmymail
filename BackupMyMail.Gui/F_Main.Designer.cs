@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(F_Main));
             this.TP_others = new System.Windows.Forms.TabPage();
+            this.CB_autoStartApp = new System.Windows.Forms.CheckBox();
             this.L_backupRegistryInfo = new System.Windows.Forms.Label();
             this.CB_notUseVss = new System.Windows.Forms.CheckBox();
             this.CB_copyRegistrySettings = new System.Windows.Forms.CheckBox();
@@ -42,6 +43,11 @@
             this.CB_afterBackupCloseComputer = new System.Windows.Forms.CheckBox();
             this.CB_deleteAllPstFileFromBackup = new System.Windows.Forms.CheckBox();
             this.TP_backup = new System.Windows.Forms.TabPage();
+            this.GB_accountPermission = new System.Windows.Forms.GroupBox();
+            this.LB_password = new System.Windows.Forms.Label();
+            this.L_userName = new System.Windows.Forms.Label();
+            this.TB_passWord = new System.Windows.Forms.TextBox();
+            this.TB_userName = new System.Windows.Forms.TextBox();
             this.L_actualState = new System.Windows.Forms.Label();
             this.L_labelActualState = new System.Windows.Forms.Label();
             this.B_browseBackupOutputFolder = new System.Windows.Forms.Button();
@@ -51,6 +57,7 @@
             this.B_startBackupNow = new System.Windows.Forms.Button();
             this.TC_Main = new System.Windows.Forms.TabControl();
             this.TP_schedule = new System.Windows.Forms.TabPage();
+            this.B_saveSettings = new System.Windows.Forms.Button();
             this.L_actualScheduleSet = new System.Windows.Forms.Label();
             this.L_descriptionScheduleState = new System.Windows.Forms.Label();
             this.GB_addEditRemoveSchedule = new System.Windows.Forms.GroupBox();
@@ -91,9 +98,9 @@
             this.SWTSMI_backupNow = new System.Windows.Forms.ToolStripMenuItem();
             this.SWTSMI_separate1 = new System.Windows.Forms.ToolStripSeparator();
             this.SWTSMI_closeProgram = new System.Windows.Forms.ToolStripMenuItem();
-            this.CB_autoStartApp = new System.Windows.Forms.CheckBox();
             this.TP_others.SuspendLayout();
             this.TP_backup.SuspendLayout();
+            this.GB_accountPermission.SuspendLayout();
             this.TC_Main.SuspendLayout();
             this.TP_schedule.SuspendLayout();
             this.GB_addEditRemoveSchedule.SuspendLayout();
@@ -127,6 +134,20 @@
             this.TP_others.TabIndex = 1;
             this.TP_others.Text = "Others";
             this.TP_others.UseVisualStyleBackColor = true;
+            // 
+            // CB_autoStartApp
+            // 
+            this.CB_autoStartApp.AutoSize = true;
+            this.CB_autoStartApp.Checked = true;
+            this.CB_autoStartApp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CB_autoStartApp.Location = new System.Drawing.Point(18, 158);
+            this.CB_autoStartApp.Name = "CB_autoStartApp";
+            this.CB_autoStartApp.Size = new System.Drawing.Size(194, 17);
+            this.CB_autoStartApp.TabIndex = 18;
+            this.CB_autoStartApp.Tag = "";
+            this.CB_autoStartApp.Text = "Autostart application after user login";
+            this.CB_autoStartApp.UseVisualStyleBackColor = true;
+            this.CB_autoStartApp.CheckedChanged += new System.EventHandler(this.CB_autoStartApp_CheckedChanged);
             // 
             // L_backupRegistryInfo
             // 
@@ -232,6 +253,7 @@
             // 
             // TP_backup
             // 
+            this.TP_backup.Controls.Add(this.GB_accountPermission);
             this.TP_backup.Controls.Add(this.L_actualState);
             this.TP_backup.Controls.Add(this.L_labelActualState);
             this.TP_backup.Controls.Add(this.B_browseBackupOutputFolder);
@@ -246,6 +268,53 @@
             this.TP_backup.TabIndex = 0;
             this.TP_backup.Text = "Backup";
             this.TP_backup.UseVisualStyleBackColor = true;
+            // 
+            // GB_accountPermission
+            // 
+            this.GB_accountPermission.Controls.Add(this.LB_password);
+            this.GB_accountPermission.Controls.Add(this.L_userName);
+            this.GB_accountPermission.Controls.Add(this.TB_passWord);
+            this.GB_accountPermission.Controls.Add(this.TB_userName);
+            this.GB_accountPermission.Location = new System.Drawing.Point(26, 68);
+            this.GB_accountPermission.Name = "GB_accountPermission";
+            this.GB_accountPermission.Size = new System.Drawing.Size(357, 116);
+            this.GB_accountPermission.TabIndex = 14;
+            this.GB_accountPermission.TabStop = false;
+            this.GB_accountPermission.Text = "Use bellow administration account";
+            this.GB_accountPermission.Visible = false;
+            // 
+            // LB_password
+            // 
+            this.LB_password.AutoSize = true;
+            this.LB_password.Location = new System.Drawing.Point(42, 71);
+            this.LB_password.Name = "LB_password";
+            this.LB_password.Size = new System.Drawing.Size(53, 13);
+            this.LB_password.TabIndex = 3;
+            this.LB_password.Text = "Password";
+            // 
+            // L_userName
+            // 
+            this.L_userName.AutoSize = true;
+            this.L_userName.Location = new System.Drawing.Point(40, 36);
+            this.L_userName.Name = "L_userName";
+            this.L_userName.Size = new System.Drawing.Size(55, 13);
+            this.L_userName.TabIndex = 2;
+            this.L_userName.Text = "Username";
+            // 
+            // TB_passWord
+            // 
+            this.TB_passWord.Location = new System.Drawing.Point(101, 68);
+            this.TB_passWord.Name = "TB_passWord";
+            this.TB_passWord.PasswordChar = '*';
+            this.TB_passWord.Size = new System.Drawing.Size(208, 20);
+            this.TB_passWord.TabIndex = 1;
+            // 
+            // TB_userName
+            // 
+            this.TB_userName.Location = new System.Drawing.Point(101, 33);
+            this.TB_userName.Name = "TB_userName";
+            this.TB_userName.Size = new System.Drawing.Size(208, 20);
+            this.TB_userName.TabIndex = 0;
             // 
             // L_actualState
             // 
@@ -327,6 +396,7 @@
             // 
             // TP_schedule
             // 
+            this.TP_schedule.Controls.Add(this.B_saveSettings);
             this.TP_schedule.Controls.Add(this.L_actualScheduleSet);
             this.TP_schedule.Controls.Add(this.L_descriptionScheduleState);
             this.TP_schedule.Controls.Add(this.GB_addEditRemoveSchedule);
@@ -337,6 +407,16 @@
             this.TP_schedule.TabIndex = 2;
             this.TP_schedule.Text = "Schedule";
             this.TP_schedule.UseVisualStyleBackColor = true;
+            // 
+            // B_saveSettings
+            // 
+            this.B_saveSettings.Location = new System.Drawing.Point(313, 251);
+            this.B_saveSettings.Name = "B_saveSettings";
+            this.B_saveSettings.Size = new System.Drawing.Size(75, 23);
+            this.B_saveSettings.TabIndex = 4;
+            this.B_saveSettings.Text = "Save settigs";
+            this.B_saveSettings.UseVisualStyleBackColor = true;
+            this.B_saveSettings.Visible = false;
             // 
             // L_actualScheduleSet
             // 
@@ -750,25 +830,13 @@
             this.SWTSMI_closeProgram.Text = "Close Program";
             this.SWTSMI_closeProgram.Click += new System.EventHandler(this.SWTSMI_closeProgram_Click);
             // 
-            // CB_autoStartApp
-            // 
-            this.CB_autoStartApp.AutoSize = true;
-            this.CB_autoStartApp.Checked = true;
-            this.CB_autoStartApp.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CB_autoStartApp.Location = new System.Drawing.Point(18, 158);
-            this.CB_autoStartApp.Name = "CB_autoStartApp";
-            this.CB_autoStartApp.Size = new System.Drawing.Size(194, 17);
-            this.CB_autoStartApp.TabIndex = 18;
-            this.CB_autoStartApp.Tag = "";
-            this.CB_autoStartApp.Text = "Autostart application after user login";
-            this.CB_autoStartApp.UseVisualStyleBackColor = true;
-            // 
             // F_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(418, 317);
             this.Controls.Add(this.TC_Main);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "F_Main";
@@ -780,6 +848,8 @@
             this.TP_others.PerformLayout();
             this.TP_backup.ResumeLayout(false);
             this.TP_backup.PerformLayout();
+            this.GB_accountPermission.ResumeLayout(false);
+            this.GB_accountPermission.PerformLayout();
             this.TC_Main.ResumeLayout(false);
             this.TP_schedule.ResumeLayout(false);
             this.TP_schedule.PerformLayout();
@@ -864,6 +934,12 @@
         private System.Windows.Forms.Label L_copyInfoAdd;
         private System.Windows.Forms.Label L_backupRegistryInfo;
         private System.Windows.Forms.CheckBox CB_autoStartApp;
+        private System.Windows.Forms.GroupBox GB_accountPermission;
+        private System.Windows.Forms.Label LB_password;
+        private System.Windows.Forms.Label L_userName;
+        private System.Windows.Forms.TextBox TB_passWord;
+        private System.Windows.Forms.TextBox TB_userName;
+        private System.Windows.Forms.Button B_saveSettings;
 
 
     }

@@ -153,10 +153,55 @@
   <metadata name="B_startBackupNow.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="L_actualState.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_labelActualState.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_browseBackupOutputFolder.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_infoBackupPath.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="TB_pathToBackupOutputFolder.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_terminateBackupNow.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_startBackupNow.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="TC_Main.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="TP_schedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_actualScheduleSet.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_descriptionScheduleState.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="GB_addEditRemoveSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="TP_restore.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="GB_pathsToRestorePst.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_browseRegOutlookRestore.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="TB_pathToRegOutlookRestore.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_restoreOutlookRegistry.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="L_actualScheduleSet.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -210,10 +255,55 @@
   <metadata name="DTP_startScheduleDate.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <metadata name="TP_restore.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="B_removeSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_editSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="CB_repeadScheduleKind.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_descriptionStartTimeSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_descriptionRepeatSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="NUD_repeatEveryNum.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="CB_repeatEvery.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_addSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="label3.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="label2.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_descriptionStartDateSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="NUD_startMinuteSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="NUD_startHourSchedule.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="DTP_startScheduleDate.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="GB_pathsToRestorePst.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="GB_pathToPstInfo.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="GB_restorePstS.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="GB_pathToPstInfo.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -231,7 +321,37 @@
   <metadata name="B_readPstInfo.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="L_pathToDefaultPst.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_browsePathToPstInfo.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="TB_pathToPstInfo.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_readPstInfo.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="GB_restorePstS.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_copyInfoAdd2.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_copyInfoAdd.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_terminateCopy.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="L_copyState.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_restoreDefaultPstAndArchivePstS.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="B_restoreDefaultPST.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <metadata name="L_copyInfoAdd2.Locked" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -268,24 +388,6 @@
     <value>122, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="SWTSMI_backupNow.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOuAAA
-        DrgBakH1WwAAAq1JREFUOE+lk/lLVFEUx0cJApdf6qdAE7U0S3OpHCnUemWCFAot/gP9YpFRjhD5S6ET
-        alZuOW7jJO6MFhSVQlERtpAmmAQtkLTR4oxjbvPmvnu/nftmFAf8rQeHB++d87nf873nGAAEGE7fX2so
-        eHbYUDBsDjz13L6m8MWqEUj/ZI6eSzV6rV58crgoqOi1I7F6EvttDmS1O1cN+U/myFxZo9dKWohpZDqn
-        x42sLo6MmxrSKTLbNezr0KB0ajjQzXGwhyO7jyPvlkBevwpZoyuRkuKqviG5wYPt9R4k0TulkWFnE0Nq
-        C0OaVcNuG0EJmNHBoRAsq1cgseY79HaCzo3Yoyqc2FrtQXytF5J4w4O9bQymIQ22MY66VxxnhjjufBDI
-        v82R2cnpgBmEFL/pM4QWj9ujK2ew5brqB+kZ55iaF3AuAEIArkWAceDYALVJSoytc1hf8tYLiCqfQcxV
-        dRmS28lQeI/kNzPkdjNM/CKC7znS723H2CIBE15AJAE2X1ERe01FHAESSEVCnVdJ0SDHg48Cjz8LPJkU
-        yOnWsIdMTm1eApjG7RFmF6Ir3UhvVPFzFvjxF/g0JVDyUNMhyRaGdKvXWGOrphu7o3EW6y4QIJgA4WUu
-        RJa7kdnk8QkF3v0WON7LkN/HUP+S41AXoyKGXdSWhKRYVgDCSl3YeJkUWFTMqQLv/wjMewQ0av2LS8D8
-        dEmJZxmS1ECA82Ri0Nkx+4aLDoSb3TDWqyh9xJBtVXFigIy8y3CUTEymYumJvN4Uake2El/rQqi8RjkM
-        YZe+IrxskSCLiCAlsp1N5MmysXQ722r8ITGVvkGS4xhsGp1OsywgtkrVlUhIVIUPQt+WbkdCUul0pd1N
-        QzTqG+UVy5REi6JYHVDanFBscnn8Q2lzQOb4LRMZ/h/rjIB/+fufVL5vmToAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="NI_F_Main.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAA
@@ -308,6 +410,24 @@
         /gf///8BGHT+Bxh0/k0YdP6FGnb9qxx4/qsceP6rHHj+qxx4/qsceP6rHHj+qxp2/asYdP6FGHT+TRh0
         /gf///8BAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA
         //8AAP//AAD//w==
+</value>
+  </data>
+  <data name="SWTSMI_backupNow.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOuAAA
+        DrgBakH1WwAAAq1JREFUOE+lk/lLVFEUx0cJApdf6qdAE7U0S3OpHCnUemWCFAot/gP9YpFRjhD5S6ET
+        alZuOW7jJO6MFhSVQlERtpAmmAQtkLTR4oxjbvPmvnu/nftmFAf8rQeHB++d87nf873nGAAEGE7fX2so
+        eHbYUDBsDjz13L6m8MWqEUj/ZI6eSzV6rV58crgoqOi1I7F6EvttDmS1O1cN+U/myFxZo9dKWohpZDqn
+        x42sLo6MmxrSKTLbNezr0KB0ajjQzXGwhyO7jyPvlkBevwpZoyuRkuKqviG5wYPt9R4k0TulkWFnE0Nq
+        C0OaVcNuG0EJmNHBoRAsq1cgseY79HaCzo3Yoyqc2FrtQXytF5J4w4O9bQymIQ22MY66VxxnhjjufBDI
+        v82R2cnpgBmEFL/pM4QWj9ujK2ew5brqB+kZ55iaF3AuAEIArkWAceDYALVJSoytc1hf8tYLiCqfQcxV
+        dRmS28lQeI/kNzPkdjNM/CKC7znS723H2CIBE15AJAE2X1ERe01FHAESSEVCnVdJ0SDHg48Cjz8LPJkU
+        yOnWsIdMTm1eApjG7RFmF6Ir3UhvVPFzFvjxF/g0JVDyUNMhyRaGdKvXWGOrphu7o3EW6y4QIJgA4WUu
+        RJa7kdnk8QkF3v0WON7LkN/HUP+S41AXoyKGXdSWhKRYVgDCSl3YeJkUWFTMqQLv/wjMewQ0av2LS8D8
+        dEmJZxmS1ECA82Ri0Nkx+4aLDoSb3TDWqyh9xJBtVXFigIy8y3CUTEymYumJvN4Uake2El/rQqi8RjkM
+        YZe+IrxskSCLiCAlsp1N5MmysXQ722r8ITGVvkGS4xhsGp1OsywgtkrVlUhIVIUPQt+WbkdCUul0pd1N
+        QzTqG+UVy5REi6JYHVDanFBscnn8Q2lzQOb4LRMZ/h/rjIB/+fufVL5vmToAAAAASUVORK5CYII=
 </value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

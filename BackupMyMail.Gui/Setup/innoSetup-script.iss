@@ -35,12 +35,12 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\BackupMyMail.Lib.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\HoboCopy-x64.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\HoboCopy-x86.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Debug\HoboCopy-x86-XP.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\BackupMyMail.Gui.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\BackupMyMail.Lib.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\HoboCopy-x64.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\HoboCopy-x86.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\HoboCopy-x86-XP.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\License.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup\Uninstaller.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
