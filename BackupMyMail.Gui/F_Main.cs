@@ -14,6 +14,8 @@ using System.Xml;
 using BackupMyMail.Lib;
 using System.Threading;
 using System.Reflection;
+using Microsoft.Win32;
+using System.Runtime.InteropServices;
 
 namespace BackupMyMail.Gui
 {
@@ -39,9 +41,11 @@ namespace BackupMyMail.Gui
         private bool autostart = false;
         private string scheduledTaskName = "BackupMyMail";
         private bool minimalizeAfterStart = false;
-        //private string username = string.Empty;
-        //private string password = string.Empty;
-        private bool closeProgram = false;
+        private static bool closeProgram = false;
+        bool bShutDownPending = false;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern int GetSystemMetrics(int nIndex);
 
         public F_Main(string[] args)
         {
@@ -67,7 +71,7 @@ namespace BackupMyMail.Gui
         }
 
         private void AfterStart()
-        { 
+        {
             timer = new System.Windows.Forms.Timer() { Interval = 1000, Enabled = true };
             timer.Tick += timer_Tick;
             timer.Start();
@@ -115,8 +119,16 @@ namespace BackupMyMail.Gui
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            //timer.Stop();
-            //timer.Enabled = false;
+            //SM_SHUTTINGDOWN = 0x2000
+            bShutDownPending = GetSystemMetrics(0x2000) != 0;
+            if (bShutDownPending)
+            {
+                timer.Stop();
+                timer.Enabled = false;
+                closeProgram = true;
+                Application.Exit();
+            }
+
             if (copyState)
             {
                 //during copy
@@ -222,8 +234,6 @@ namespace BackupMyMail.Gui
             "Error Message",
             MessageBoxButtons.OK,
             MessageBoxIcon.Error);
-            //timer.Enabled = true;
-            //timer.Start();
         }
 
         private void B_browseBackupOutputFolder_Click(object sender, EventArgs e)
@@ -359,7 +369,7 @@ namespace BackupMyMail.Gui
 
             ReadXML();
             executeProgramFolder = Path.GetDirectoryName(Application.ExecutablePath);
-            manager = new Manager(executeProgramFolder);//, username, StringToSecureString(password));
+            manager = new Manager(executeProgramFolder);
 
             TB_pathToLogFile.Text = pathToLog;
 
@@ -382,17 +392,25 @@ namespace BackupMyMail.Gui
                 this.ShowInTaskbar = false;
             }
 
-            //CB_repeadScheduleKind.SelectedIndex = 1;
-            //DTP_startScheduleDate.Value = DateTime.Now;
-            //DTP_startScheduleDate.MinDate = DateTime.Now;
-            //NUD_startHourSchedule.Value = DateTime.Now.Hour;
-            //NUD_startMinuteSchedule.Value = DateTime.Now.Minute;
+            //set actual date
+            if (scheduleRun.Year < 2000)
+                SetDefaultScheduler();
 
             if (String.Compare(L_actualScheduleSet.Text, "null", false) != 0)
                 return;
 
             B_editSchedule.Enabled = false;
             B_removeSchedule.Enabled = false;
+        }
+
+        private void SetDefaultScheduler()
+        {
+            CB_repeatEvery.Checked = false;
+            CB_repeadScheduleKind.SelectedIndex = 1;
+            DTP_startScheduleDate.Value = DateTime.Now;
+            DTP_startScheduleDate.MinDate = DateTime.Now;
+            NUD_startHourSchedule.Value = DateTime.Now.Hour;
+            NUD_startMinuteSchedule.Value = DateTime.Now.Minute;
         }
 
         private static void CloseComputer()
@@ -504,20 +522,14 @@ namespace BackupMyMail.Gui
                 if (System.Environment.OSVersion.Version.Major >= 6)
                     p.StartInfo.Verb = "runas";
 
-                //p.StartInfo.UserName = username;
-                //p.StartInfo.Password = StringToSecureString(password);
-
                 p.StartInfo.Arguments = String.Format("/Query /S {0} /TN {1} /FO TABLE /NH", Environment.MachineName, scheduledTaskName);
 
                 p.Start();
-                // Read the error stream
                 string error = p.StandardError.ReadToEnd();
 
-                //Read the output string
                 p.StandardOutput.ReadLine();
                 tbl = p.StandardOutput.ReadToEnd();
 
-                //Then wait for it to finish
                 p.WaitForExit();
             }
             catch (Exception ex)
@@ -548,21 +560,15 @@ namespace BackupMyMail.Gui
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                //p.StartInfo.UserName = username;
-                //p.StartInfo.Password = StringToSecureString(password);
-
                 p.StartInfo.Arguments = String.Format("/delete /TN {0} /f",
                                         scheduledTaskName);
 
                 p.Start();
-                // Read the error stream
                 string error = p.StandardError.ReadToEnd();
 
-                //Read the output string
                 p.StandardOutput.ReadLine();
                 string output = p.StandardOutput.ReadToEnd();
 
-                //Then wait for it to finish
                 p.WaitForExit();
             }
             catch (Exception ex)
@@ -588,23 +594,17 @@ namespace BackupMyMail.Gui
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                //p.StartInfo.UserName = username;
-                //p.StartInfo.Password = StringToSecureString(password);
-
                 p.StartInfo.Arguments = String.Format("/create /sc onlogon /tn {0} /rl highest /tr \"\\\"{1}\\\" {2}\"",
                                         scheduledTaskName,
                                         Assembly.GetEntryAssembly().Location,
                                         "/min"); //minimalize window
 
                 p.Start();
-                // Read the error stream
                 string error = p.StandardError.ReadToEnd();
 
-                //Read the output string
                 p.StandardOutput.ReadLine();
                 string output = p.StandardOutput.ReadToEnd();
 
-                //Then wait for it to finish
                 p.WaitForExit();
             }
             catch (Exception ex)
@@ -621,16 +621,6 @@ namespace BackupMyMail.Gui
                 {
                     File.Delete(pathToSettings);
                 }
-
-                //if (!string.IsNullOrEmpty(TB_userName.Text))
-                //{
-                //    username = TB_userName.Text;
-                //}
-
-                //if (!string.IsNullOrEmpty(TB_passWord.Text))
-                //{
-                //    password = TB_passWord.Text;
-                //}
 
                 bool deleteAllPstFromBackupFolder = false;
                 if (CB_deleteAllPstFileFromBackup.Checked)
@@ -654,14 +644,13 @@ namespace BackupMyMail.Gui
 
                 if (CB_autoStartApp.Checked)
                 {
-                    //CreateAutostartTask();
                     autostart = true;
+
+                    //default option if user don't change control
+                    CreateAutostartTask();
                 }
                 else
-                {
-                    //DeleteAutostartTask();
                     autostart = false;
-                }
 
                 bool enableRepeat = false;
                 if (CB_repeatEvery.Checked)
@@ -736,11 +725,6 @@ namespace BackupMyMail.Gui
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    //textWriter.WriteStartElement("Username", username);
-                    //textWriter.WriteEndElement();
-                    //textWriter.WriteWhitespace(Environment.NewLine);
-                    //textWriter.WriteWhitespace("   ");
-                    //textWriter.WriteStartElement("EncryptPassword", EncryptPassword(password));
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteEndDocument();
@@ -828,16 +812,6 @@ namespace BackupMyMail.Gui
                                 else
                                     CB_autoStartApp.Checked = false;
                             }
-                            //if (String.Compare(reader.Name, "Username", false) == 0)
-                            //{
-                            //    username = reader.NamespaceURI;
-                            //    TB_userName.Text = username;
-                            //}
-                            //if (String.Compare(reader.Name, "EncryptPassword", false) == 0)
-                            //{
-                            //    password = reader.NamespaceURI;
-                            //    TB_passWord.Text = DecryptPassword(password);
-                            //}
                             if (String.Compare(reader.Name, "EnableRepeat", false) == 0)
                             {
                                 bool enableRepeat = bool.Parse(reader.NamespaceURI);
@@ -883,16 +857,6 @@ namespace BackupMyMail.Gui
                 secureString.AppendChar(c);
             }
             return secureString;
-        }
-
-        private string DecryptPassword(string input)
-        {
-            return Security.ToInsecureString(Security.DecryptString(input));
-        }
-
-        private string EncryptPassword(string input)
-        {
-            return Security.EncryptString(StringToSecureString(input));
         }
 
         private void CB_afterBackupCloseComputer_CheckedChanged(object sender, EventArgs e)
@@ -1001,6 +965,8 @@ namespace BackupMyMail.Gui
 
         private void B_removeSchedule_Click(object sender, EventArgs e)
         {
+            SetDefaultScheduler();
+
             scheduleRun = new DateTime(1999, 1, 1, 0, 0, 0);
             L_actualScheduleSet.Text = "null";
             B_addSchedule.Enabled = true;
@@ -1098,8 +1064,7 @@ namespace BackupMyMail.Gui
             {
                 psiRestoreReg.UseShellExecute = true;
             }
-            //psiRestoreReg.UserName = username;
-            //psiRestoreReg.Password = StringToSecureString(password);
+
             System.Diagnostics.Process pRestoreReg = Process.Start(psiRestoreReg);
             pRestoreReg.WaitForExit();
             if (!pRestoreReg.HasExited)
@@ -1325,15 +1290,5 @@ namespace BackupMyMail.Gui
             else
                 DeleteAutostartTask();
         }
-
-        //private void TB_passWord_TextChanged(object sender, EventArgs e)
-        //{
-        //    password = this.Text;
-        //}
-
-        //private void B_saveSettings_Click(object sender, EventArgs e)
-        //{
-        //    SaveXML();
-        //}
     }
 }

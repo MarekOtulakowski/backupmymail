@@ -116,7 +116,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Security.cs" />
     <EmbeddedResource Include="F_Main.resx">
       <DependentUpon>F_Main.cs</DependentUpon>
     </EmbeddedResource>
