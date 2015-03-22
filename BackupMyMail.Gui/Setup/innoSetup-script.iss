@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{A3D4DCAC-1A90-496D-B2F3-2CA59AF02CA1}
 AppName=BackupMyMail
-AppVersion=1.3.2.0
-AppVerName=BackupMyMail 1.3.2.0
+AppVersion=1.3.2.3
+AppVerName=BackupMyMail 1.3.2.3
 AppPublisher=MarekOtulakowski
 AppPublisherURL=https://github.com/MarekOtulakowski/BackupMyMail
 AppSupportURL=https://github.com/MarekOtulakowski/BackupMyMail
@@ -18,8 +18,8 @@ DefaultGroupName=BackupMyMail
 AllowNoIcons=yes
 LicenseFile=C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\License.txt
 OutputDir=C:\Users\Marek\Desktop
-OutputBaseFilename=setup-backupmymail-v1.3.2
-VersionInfoVersion=1.3.2.0
+OutputBaseFilename=setup-backupmymail-v1.3.2.3
+VersionInfoVersion=1.3.2.3
 VersionInfoCopyright=Copyright © MarekOtulakowski 2011-2015
 VersionInfoDescription=Installer for BackupMyMail
 SetupIconFile=C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup\SetupIcon.ico

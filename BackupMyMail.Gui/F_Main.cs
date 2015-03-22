@@ -43,6 +43,10 @@ namespace BackupMyMail.Gui
         private bool minimalizeAfterStart = false;
         private static bool closeProgram = false;
         bool bShutDownPending = false;
+        bool enableRepeat = false;
+        int repeatNumber = 0;
+        int repeatKind = 0;
+        Version appSettingsVersion = new Version("0.0.0.0");
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int GetSystemMetrics(int nIndex);
@@ -361,13 +365,22 @@ namespace BackupMyMail.Gui
 
         private void F_Main_Load(object sender, EventArgs e)
         {
+            this.NI_F_Main.MouseClick += NI_F_Main_MouseClick;
+
             if (minimalizeAfterStart)
                 this.WindowState = FormWindowState.Minimized;
 
             Version version = Assembly.GetEntryAssembly().GetName().Version;
             this.Text = this.Text + version.ToString();
-
+            
             ReadXML();
+            if (appSettingsVersion.CompareTo(new Version("1.3.2.3")) == -1)
+            {
+                //reorder save settings for older version < 1.3.2.3
+                SaveXML();
+                ReadXML();
+            }
+
             executeProgramFolder = Path.GetDirectoryName(Application.ExecutablePath);
             manager = new Manager(executeProgramFolder);
 
@@ -401,6 +414,16 @@ namespace BackupMyMail.Gui
 
             B_editSchedule.Enabled = false;
             B_removeSchedule.Enabled = false;
+        }
+
+        void NI_F_Main_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+                this.BringToFront();
+            }
         }
 
         private void SetDefaultScheduler()
@@ -664,6 +687,8 @@ namespace BackupMyMail.Gui
                 //0 - hour, 1 - day, 2 - weekday
                 int repeatKind = CB_repeadScheduleKind.SelectedIndex;
 
+                Version version = Assembly.GetEntryAssembly().GetName().Version;
+
                 using (var textWriter = new XmlTextWriter(pathToSettings, null))
                 {
                     textWriter.WriteStartDocument();
@@ -671,25 +696,26 @@ namespace BackupMyMail.Gui
                     textWriter.WriteComment("Backup My Mail for Microsoft Outlook - file settings");
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteStartElement("ApplicationSettings");
+                    textWriter.WriteAttributeString("Version", version.ToString());
                     textWriter.WriteWhitespace(Environment.NewLine);
-                    textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("FolderBackup", TB_pathToBackupOutputFolder.Text);
+                    textWriter.WriteWhitespace("   ");                    
+                    textWriter.WriteStartElement("EnableRepeat", enableRepeat.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("DeleteAllPstFromBackupFolder", deleteAllPstFromBackupFolder.ToString());
+                    textWriter.WriteStartElement("FolderBackup", TB_pathToBackupOutputFolder.Text);                    
+                    textWriter.WriteEndElement();
+                    textWriter.WriteWhitespace(Environment.NewLine);
+                    textWriter.WriteWhitespace("   ");
+                    textWriter.WriteStartElement("RepeatKind", repeatKind.ToString());                    
+                    textWriter.WriteEndElement();
+                    textWriter.WriteWhitespace(Environment.NewLine);
+                    textWriter.WriteWhitespace("   ");
+                    textWriter.WriteStartElement("RepeatNumber", repeatNumber.ToString());                    
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
                     textWriter.WriteStartElement("AfterBackupCloseComputer", afterBackupCloseComputer.ToString());
-                    textWriter.WriteEndElement();
-                    textWriter.WriteWhitespace(Environment.NewLine);
-                    textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("MinimalizeWindowOnStartUp", minimalizeWindowOnStartUp.ToString());
-                    textWriter.WriteEndElement();
-                    textWriter.WriteWhitespace(Environment.NewLine);
-                    textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("ScheduleTime", scheduleRun.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
@@ -713,18 +739,17 @@ namespace BackupMyMail.Gui
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("EnableRepeat", enableRepeat.ToString());
+                    textWriter.WriteStartElement("DeleteAllPstFromBackupFolder", deleteAllPstFromBackupFolder.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("RepeatNumber", repeatNumber.ToString());
+                    textWriter.WriteStartElement("MinimalizeWindowOnStartUp", minimalizeWindowOnStartUp.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("RepeatKind", repeatKind.ToString());
+                    textWriter.WriteStartElement("ScheduleTime", scheduleRun.ToString());                    
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
-                    textWriter.WriteWhitespace("   ");
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteEndDocument();
@@ -752,9 +777,84 @@ namespace BackupMyMail.Gui
                         var nType = reader.NodeType;
                         if (nType == XmlNodeType.Element)
                         {
+                            if (String.Compare(reader.Name, "ApplicationSettings", false) == 0)
+                            {
+                                if (reader.AttributeCount > 0)
+                                {
+                                    reader.MoveToAttribute("Version");
+                                    try
+                                    {
+                                        appSettingsVersion = new Version(reader.Value);
+                                    }
+                                    catch { }
+                                }
+                            }
                             if (String.Compare(reader.Name, "FolderBackup", false) == 0)
                             {
-                                TB_pathToBackupOutputFolder.Text = reader.NamespaceURI;
+                                folderBackup = reader.NamespaceURI;
+                                TB_pathToBackupOutputFolder.Text = folderBackup;
+                            }
+                            if (String.Compare(reader.Name, "ActualSetSchedule", false) == 0)
+                            {
+                                L_actualScheduleSet.Text = reader.NamespaceURI;
+                            }
+                            if (String.Compare(reader.Name, "EnableRepeat", false) == 0)
+                            {
+                                enableRepeat = bool.Parse(reader.NamespaceURI);
+                                if (enableRepeat)
+                                    CB_repeatEvery.Checked = true;
+                                else
+                                    CB_repeatEvery.Checked = false;
+                            }
+                            if (String.Compare(reader.Name, "RepeatNumber", false) == 0)
+                            {
+                                repeatNumber = Int32.Parse(reader.NamespaceURI);
+                                if (repeatNumber > -1 && repeatNumber < 10)
+                                    NUD_repeatEveryNum.Value = (decimal)repeatNumber;
+                                else
+                                    NUD_repeatEveryNum.Value = 0;
+                            }
+                            if (String.Compare(reader.Name, "RepeatKind", false) == 0)
+                            {
+                                //0 - hour, 1 - day, 2 - weekday
+                                repeatKind = Int32.Parse(reader.NamespaceURI);
+                                if (repeatKind > -1 && repeatKind < 4)
+                                    CB_repeadScheduleKind.SelectedIndex = repeatKind;
+                                else
+                                    CB_repeadScheduleKind.SelectedIndex = 0;
+                            }
+                            if (String.Compare(reader.Name, "ScheduleTime", false) == 0)
+                            {
+                                if (String.Compare(reader.NamespaceURI, string.Empty, false) != 0)
+                                {
+                                    try
+                                    {
+                                        scheduleRun = DateTime.Parse(reader.NamespaceURI);
+                                        DTP_startScheduleDate.Value = scheduleRun.Date;
+                                        NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
+                                        NUD_startMinuteSchedule.Value = (decimal)scheduleRun.Minute;
+
+                                        if (!SetNextScheduler())
+                                        {
+                                            L_actualScheduleSet.Text = string.Empty;                                         
+                                        }
+
+                                        if (scheduleRun > DateTime.Now)
+                                        {
+                                            DTP_startScheduleDate.Value = scheduleRun.Date;
+                                            NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
+                                            NUD_startMinuteSchedule.Value = (decimal)scheduleRun.Minute;
+                                            this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
+                                            this.Icon = new Icon(GetType(), "schedule.ico");
+                                        }
+                                        else
+                                        {
+                                            this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
+                                            this.Icon = new Icon(GetType(), "normal.ico");
+                                        }
+                                    }
+                                    catch { }
+                                }
                             }
                             if (String.Compare(reader.Name, "NotUseVss", false) == 0)
                             {
@@ -776,30 +876,6 @@ namespace BackupMyMail.Gui
                             {
                                 CB_copyRegistrySettings.Checked = bool.Parse(reader.NamespaceURI) ? true : false;
                             }
-                            if (String.Compare(reader.Name, "ScheduleTime", false) == 0)
-                            {
-                                if (String.Compare(reader.NamespaceURI, string.Empty, false) != 0)
-                                {
-                                    scheduleRun = DateTime.Parse(reader.NamespaceURI);
-                                    if (scheduleRun.Year > 1999)
-                                    {
-                                        this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
-                                        this.Icon = new Icon(GetType(), "schedule.ico");
-                                        DTP_startScheduleDate.Value = scheduleRun.Date;
-                                        NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
-                                        NUD_startMinuteSchedule.Value = (decimal)scheduleRun.Minute;
-                                    }
-                                    else
-                                    {
-                                        this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                                        this.Icon = new Icon(GetType(), "normal.ico");
-                                    }
-                                }
-                            }
-                            if (String.Compare(reader.Name, "ActualSetSchedule", false) == 0)
-                            {
-                                L_actualScheduleSet.Text = reader.NamespaceURI;
-                            }
                             if (String.Compare(reader.Name, "PathToLog", false) == 0)
                             {
                                 pathToLog = reader.NamespaceURI;
@@ -812,31 +888,6 @@ namespace BackupMyMail.Gui
                                 else
                                     CB_autoStartApp.Checked = false;
                             }
-                            if (String.Compare(reader.Name, "EnableRepeat", false) == 0)
-                            {
-                                bool enableRepeat = bool.Parse(reader.NamespaceURI);
-                                if (enableRepeat)
-                                    CB_repeatEvery.Checked = true;
-                                else
-                                    CB_repeatEvery.Checked = false;
-                            }
-                            if (String.Compare(reader.Name, "RepeatNumber", false) == 0)
-                            {
-                                int repeatNumber = Int32.Parse(reader.NamespaceURI);
-                                if (repeatNumber > -1 && repeatNumber < 10)
-                                    NUD_repeatEveryNum.Value = (decimal)repeatNumber;
-                                else
-                                    NUD_repeatEveryNum.Value = 0;
-                            }
-                            if (String.Compare(reader.Name, "RepeatKind", false) == 0)
-                            {
-                                //0 - hour, 1 - day, 2 - weekday
-                                int repeatKind = Int32.Parse(reader.NamespaceURI);
-                                if (repeatKind > -1 && repeatKind < 4)
-                                    CB_repeadScheduleKind.SelectedIndex = repeatKind;
-                                else
-                                    CB_repeadScheduleKind.SelectedIndex = 0;
-                            }
                         }
                     }
                     reader.Close();
@@ -847,6 +898,63 @@ namespace BackupMyMail.Gui
             {
                 return false;
             }
+        }
+
+        private bool IsDirectoryAccessibleRW(string path)
+        {
+            try
+            {
+                DirectoryInfo di = new DirectoryInfo(path);
+                string pathToFile = Path.Combine(path, "test");
+                File.WriteAllText(pathToFile, "test");
+                File.Delete(pathToFile);
+                return true;
+            }
+            catch
+            {
+                return false; //directory is not correctly
+            }
+        }
+
+        private bool SetNextScheduler()
+        {
+            if (!enableRepeat) return false; //repeat disable
+            if (string.IsNullOrEmpty(folderBackup)) return false; //path to folder backup is empty
+            if (!IsDirectoryAccessibleRW(folderBackup)) return false; //directory isn't accessible
+
+            //int maxIterations = 0;
+            while (scheduleRun < DateTime.Now)
+            {
+                //for safe (badly settings in file)
+                if (repeatNumber < 1) break;
+                if (repeatKind < 1 || repeatKind > 2) break;
+
+                //repeatKind => 0 - hour, 1 - day, 2 - weekday
+                if (repeatKind == 0)
+                {
+                    scheduleRun = scheduleRun.AddHours(repeatNumber);
+                    NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
+                }
+                else if (repeatKind == 1)
+                {
+                    scheduleRun = scheduleRun.AddDays(repeatNumber);                  
+                }
+                else if (repeatKind == 2)
+                {
+                    scheduleRun = scheduleRun.AddDays(repeatNumber * 7);
+                }
+                DTP_startScheduleDate.Value = scheduleRun;
+
+                ////for safe (badly settings in file)
+                //if (++maxIterations > 100) break;
+            }
+
+            if (scheduleRun < DateTime.Now)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private System.Security.SecureString StringToSecureString(string input)
@@ -906,6 +1014,25 @@ namespace BackupMyMail.Gui
 
         private void B_addSchedule_Click(object sender, EventArgs e)
         {            
+            if (string.IsNullOrEmpty(TB_pathToBackupOutputFolder.Text))
+            {
+                MessageBox.Show("Cannot add schedule if path to backup folder is empty!",
+                "Add schedule time",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!IsDirectoryAccessibleRW(folderBackup))
+            {
+                //directory isn't accessible
+                MessageBox.Show("Cannot add schedule if folder backup isn't accessible with Read-Write laws!",
+                "Add schedule time",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+                return;
+            } 
+
             var userChooseDateAndTime = new DateTime(DTP_startScheduleDate.Value.Year,
                         DTP_startScheduleDate.Value.Month,
                         DTP_startScheduleDate.Value.Day,
@@ -918,7 +1045,7 @@ namespace BackupMyMail.Gui
                 MessageBox.Show("Cannot add schedule eariel then date-time now!",
                 "Add schedule time",
                 MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+                MessageBoxIcon.Warning);
                 return;
             }
 
