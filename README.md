@@ -12,4 +12,4 @@ more description here -> https://github.com/MarekOtulakowski/BackupMyMail/wiki
 links for releases https://github.com/MarekOtulakowski/BackupMyMail/wiki/Download-build-files
 
 # BackupMyMail
-Project moved from https://backupmymail.codeplex.com/
+Older version of program (< 1.3.1) there are earlier hosting https://backupmymail.codeplex.com/
