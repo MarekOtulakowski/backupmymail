@@ -14,28 +14,27 @@ using System.Xml;
 using BackupMyMail.Lib;
 using System.Threading;
 using System.Reflection;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
 namespace BackupMyMail.Gui
 {
     public partial class F_Main : Form
     {
-        private Manager manager;
-        private string executeProgramFolder;
-        private Thread proc;
+        private Manager manager = null;
+        private string executeProgramFolder = string.Empty;
+        private Thread proc = null;
         private System.Windows.Forms.Timer timer, timerSchedule;
         private string actualState = "null";
         private string folderBackup;
-        private bool closeComputerAfterBackup;
+        private bool closeComputerAfterBackup = false;
         private readonly string pathToSettings = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\settingsBackupMyMail.xml";
         private string pathToLog = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\logBackupMyMail.txt";
-        private DateTime scheduleRun;
+        private DateTime scheduleRun = DateTime.MinValue;
         private static bool backupRunning = false;
         private List<string> listPstArchiveOrg;
         private List<string> listPstBackupArchive;
-        private string pathToBackupMainPst;
-        private Thread procCopy;
+        private string pathToBackupMainPst = string.Empty;
+        private Thread procCopy = null;
         private bool copyState = false;
         private bool notUseVss = false;
         private bool autostart = false;
@@ -555,9 +554,12 @@ namespace BackupMyMail.Gui
 
                 p.WaitForExit();
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show("Error reading is task exist", "BackupMyMail", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error reading is task exist", 
+                    "BackupMyMail", 
+                    MessageBoxButtons.OK, 
+                    MessageBoxIcon.Error);
             }
 
             if (string.IsNullOrEmpty(tbl))
@@ -1416,6 +1418,11 @@ namespace BackupMyMail.Gui
                 CreateAutostartTask();
             else
                 DeleteAutostartTask();
+        }
+
+        private void CB_notUseVss_CheckedChanged(object sender, EventArgs e)
+        {
+            notUseVss = CB_notUseVss.Checked ? true : false;
         }
     }
 }

@@ -168,6 +168,7 @@
             this.CB_notUseVss.Tag = "";
             this.CB_notUseVss.Text = "No use VSS (MS Outlook must be disable when backup is running)";
             this.CB_notUseVss.UseVisualStyleBackColor = true;
+            this.CB_notUseVss.CheckedChanged += new System.EventHandler(this.CB_notUseVss_CheckedChanged);
             // 
             // CB_copyRegistrySettings
             // 

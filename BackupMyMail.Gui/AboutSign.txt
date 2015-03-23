@@ -1,0 +1,13 @@
+﻿1. Before build installer
+
+for files in Release build run command
+
+"path_to_tool\SignTool.exe" sign /f "path_to_certyficate\ProgrammerCertyficate.pfx" /p password_certyficate /t http://timestamp.globalsign.com/scripts/timstamp.dll /d "BackupMyMail" /du "https://github.com/MarekOtulakowski/backupmymail" %1
+
+where
+%1 - first use path_to_release_BackupMyMail.Gui.exe
+%1 - second use path_to_release_BackupMyMail.Lib.exe
+
+2. After build installer
+
+%1 - third use path_to_setup_BackupMyMail.exe

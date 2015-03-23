@@ -1,5 +1,0 @@
-C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\bin\Debug\BackupMyMail.Lib.dll
-C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\bin\Debug\BackupMyMail.Lib.pdb
-C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\obj\Debug\BackupMyMail.Lib.csproj.ResolveComReference.cache
-C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\obj\Debug\BackupMyMail.Lib.dll
-C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Lib\obj\Debug\BackupMyMail.Lib.pdb
