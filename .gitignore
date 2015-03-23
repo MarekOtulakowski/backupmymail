@@ -46,3 +46,5 @@ Temporary Items
 /BackupMyMail.Lib/obj
 /BackupMyMail.Gui/bin
 /BackupMyMail.Gui/obj
+*.suo
+*.suo
