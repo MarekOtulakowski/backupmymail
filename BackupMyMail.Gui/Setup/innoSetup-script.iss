@@ -17,7 +17,7 @@ AppUpdatesURL=https://github.com/MarekOtulakowski/BackupMyMail
 DefaultDirName=C:\Program Files\BackupMyMail
 DefaultGroupName={#ApplicationName}
 AllowNoIcons=yes
-LicenseFile=C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\License.txt
+LicenseFile=C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup\License.txt
 OutputDir=C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup
 OutputBaseFilename=setup-backupmymail-v{#ApplicationVersion}
 VersionInfoVersion={#ApplicationVersion}
@@ -41,7 +41,7 @@ Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\
 Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\HoboCopy-x64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\HoboCopy-x86.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\bin\Release\HoboCopy-x86-XP.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\License.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup\License.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Marek\Documents\GitHub\Codeplex\BackupMyMail\BackupMyMail.Gui\Setup\Uninstaller.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

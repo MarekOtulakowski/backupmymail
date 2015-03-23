@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region UsingDirectives
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +9,14 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Security;
-using System.Xml; 
+using System.Xml;  
+#endregion
 
 namespace BackupMyMail.Lib
 {
     public class Manager
     {
+        #region Variables
         public string ErrorCode { get; set; }
         private readonly string executeFolderPath;
         private string pathToOutputFolder;
@@ -26,21 +29,23 @@ namespace BackupMyMail.Lib
         private List<string> listBackupPst;
         private List<string> listOrgLocationPst;
         private string OutlookVersion;
-        public bool NotUseVSSandHobocopy = false;
+        public bool NotUseVSSandHobocopy = false; 
+        #endregion
 
+        #region Constructor
         public Manager(string _executeFolderPath)
         {
             executeFolderPath = _executeFolderPath;
             listBackupPst = new List<string>();
-        }
+        } 
+        #endregion
 
+        #region Methods
         private static int GetMajorVersion(string _path)
         {
             int result = 0;
             if (String.IsNullOrEmpty(_path))
-            {
                 return result;
-            }
 
             if (!File.Exists(_path))
                 return result;
@@ -217,7 +222,7 @@ namespace BackupMyMail.Lib
                                                 if (File.Exists(output4))
                                                     listToPst.Add(output4);
                                             }
-                                        }                                        
+                                        }
                                     }
                                 }
                             }
@@ -248,9 +253,7 @@ namespace BackupMyMail.Lib
             listHobocopy.ForEach(oHobocopy =>
             {
                 if (!File.Exists(oHobocopy))
-                {
                     existHobocopy = false;
-                }
             });
             if (!existHobocopy)
             {
@@ -273,17 +276,12 @@ namespace BackupMyMail.Lib
                 string deletedFile = string.Empty;
                 List<string> listToDelete = new List<string>();
                 foreach (var oFile in fi)
-	            {
                     listToDelete.Add(oFile.FullName);
-	            }
+
                 foreach (var oFile2 in fi2)
-                {
                     listToDelete.Add(oFile2.FullName);
-                }
                 foreach (var oFile3 in fi3)
-                {
                     listToDelete.Add(oFile3.FullName);
-                }
 
                 string fileName = string.Empty;
                 while (listToDelete.Count > 0)
@@ -295,11 +293,11 @@ namespace BackupMyMail.Lib
                         listToDelete.RemoveAt(0);
                         SaveToLog(String.Format("{0} Deleted old, files:{1}", DateTime.Now, deletedFile));
                     }
-                    catch 
+                    catch
                     {
                         break;
                     }
-                } 
+                }
             }
 
             using (var regVersionOutlook = Registry.LocalMachine.OpenSubKey("Software").OpenSubKey("Microsoft").OpenSubKey("Windows").OpenSubKey("CurrentVersion").OpenSubKey("App Paths").OpenSubKey("OUTLOOK.EXE"))
@@ -332,13 +330,9 @@ namespace BackupMyMail.Lib
                     else
                     {
                         if (String.Compare(folderName, onePst.Substring(0, onePst.LastIndexOf("\\")), false) == 0)
-                        {
                             listPstFromOneFolder.Add(onePst);
-                        }
                         else
-                        {
                             listPstFromDifferentFolder.Add(onePst);
-                        }
                     }
                 });
                 if (listPstFromDifferentFolder.Count > 0)
@@ -346,19 +340,13 @@ namespace BackupMyMail.Lib
                     listOrgLocationPst.ForEach(onePst =>
                     {
                         if (!RunBackupToOnePst(_outputFolderBackup, onePst, is64bit))
-                        {
                             res = false;
-                        }
                     });
                     if (res)
-                    {
                         result = res;
-                    }
                 }
                 else
-                {
                     result = !RunBackupToOneFolder(_outputFolderBackup, listPstFromOneFolder, is64bit) ? false : true;
-                }
             }
 
             if (CopyRegistrySettings)
@@ -395,9 +383,7 @@ namespace BackupMyMail.Lib
                 uniqueSig = uniqueSig.Replace("/", "-");
                 string pathToInfoXmlFile = pathToOutputFolder + "\\" + "infoAboutMSOutlook" + uniqueSig + ".xml";
                 if (File.Exists(pathToInfoXmlFile))
-                {
                     File.Delete(pathToInfoXmlFile);
-                }
 
                 using (var textWriter = new XmlTextWriter(pathToInfoXmlFile, null))
                 {
@@ -514,9 +500,7 @@ namespace BackupMyMail.Lib
                     psi.UseShellExecute = true;
                 }
                 else
-                {
                     psi.UseShellExecute = true;
-                }
 
                 psi.CreateNoWindow = true;
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
@@ -543,14 +527,13 @@ namespace BackupMyMail.Lib
 
                 if (_pathToPst == defaultPstPath) pName += "_DEFAULT";
                 else
-                {                        
                     pName += "_ARCHIVE";
-                }
+
                 const string pExtension = ".pst";
                 string pstFileName2 = String.Format("{0}-{1}{2}", pName, uniqueSig, pExtension);
                 File.Move(String.Format("{0}\\{1}", _outputFolderBackup, pstFileName),
-                String.Format("{0}\\{1}", _outputFolderBackup, pstFileName2));   
-         
+                String.Format("{0}\\{1}", _outputFolderBackup, pstFileName2));
+
                 listBackupPst.Add(_outputFolderBackup + "\\" + pstFileName2);
 
                 SaveToLog(String.Format("{0} Changed PST's file name to => {1}\\{2}", DateTime.Now, _outputFolderBackup, pstFileName2));
@@ -594,9 +577,7 @@ namespace BackupMyMail.Lib
                     psiRegistry.UseShellExecute = true;
                 }
                 else
-                {
                     psiRegistry.UseShellExecute = true;
-                }
 
                 psiRegistry.CreateNoWindow = true;
                 psiRegistry.WindowStyle = ProcessWindowStyle.Hidden;
@@ -624,11 +605,11 @@ namespace BackupMyMail.Lib
             uniqueSig = uniqueSig.Replace("/", "-");
             string pstFileName = string.Empty;
             string newName = string.Empty;
-            
+
             foreach (var _onePathToPst in _listPathToPst)
             {
                 pstFileName = _onePathToPst.Substring(_onePathToPst.LastIndexOf("\\") + 1, _onePathToPst.Length - _onePathToPst.LastIndexOf("\\") - 1);
-                
+
                 Array.ForEach(pstFileName.ToArray(), item =>
                 {
                     newName += (int)item == 20 ? (char)8212 : item;
@@ -720,9 +701,7 @@ namespace BackupMyMail.Lib
                 listPstFiles.ForEach(oPst =>
                 {
                     if (!File.Exists(String.Format("{0}\\{1}", _outputFolderBackup, oPst)))
-                    {
-                        res = false;
-                    }
+                         res = false;
                 });
                 if (!res)
                 {
@@ -741,9 +720,8 @@ namespace BackupMyMail.Lib
                     string pName = oPst.Substring(0, oPst.LastIndexOf('.'));
                     if (listPstFiles.Count == cElement) pName += "_DEFAULT";
                     else
-                    {
                         pName += "_ARCHIVE";
-                    }
+
                     const string pExtension = ".pst";
                     string pstFileName2 = String.Format("{0}-{1}{2}", pName, uniqueSig, pExtension);
 
@@ -797,6 +775,7 @@ namespace BackupMyMail.Lib
             }
 
             log.Close();
-        }
+        } 
+        #endregion
     }
 }

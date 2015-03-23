@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region UsingDirectives
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,12 +15,14 @@ using System.Xml;
 using BackupMyMail.Lib;
 using System.Threading;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Runtime.InteropServices; 
+#endregion
 
 namespace BackupMyMail.Gui
 {
     public partial class F_Main : Form
     {
+        #region Variables
         private Manager manager = null;
         private string executeProgramFolder = string.Empty;
         private Thread proc = null;
@@ -46,10 +49,15 @@ namespace BackupMyMail.Gui
         int repeatNumber = 0;
         int repeatKind = 0;
         Version appSettingsVersion = new Version("0.0.0.0");
+        private string pstPathOrg = string.Empty;
+        #endregion
 
+        #region NativeMethods
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         static extern int GetSystemMetrics(int nIndex);
+        #endregion
 
+        #region Constructors
         public F_Main(string[] args)
         {
             if (args.Length > 0)
@@ -57,9 +65,7 @@ namespace BackupMyMail.Gui
                 for (int i = 0; i < args.Length; i++)
                 {
                     if (args[i].ToLower() == "/min")
-                    {
                         minimalizeAfterStart = true;
-                    }
                 }
             }
 
@@ -71,21 +77,10 @@ namespace BackupMyMail.Gui
         {
             InitializeComponent();
             AfterStart();
-        }
+        } 
+        #endregion
 
-        private void AfterStart()
-        {
-            timer = new System.Windows.Forms.Timer() { Interval = 1000, Enabled = true };
-            timer.Tick += timer_Tick;
-            timer.Start();
-            timerSchedule = new System.Windows.Forms.Timer() { Interval = 1000, Enabled = true };
-            timerSchedule.Tick += timerSchedule_Tick;
-            timerSchedule.Start();
-
-            listPstArchiveOrg = new List<string>();
-            listPstBackupArchive = new List<string>();
-        }
-
+        #region ControlsEvents
         private void timerSchedule_Tick(object sender, EventArgs e)
         {
             timerSchedule.Stop();
@@ -103,17 +98,12 @@ namespace BackupMyMail.Gui
             {
                 Double everyNum = Double.Parse(NUD_repeatEveryNum.Value.ToString());
                 if (CB_repeadScheduleKind.SelectedIndex == 0)
-                {
                     scheduleRun = scheduleRun.AddHours(everyNum);
-                }
                 else if (CB_repeadScheduleKind.SelectedIndex == 1)
-                {
                     scheduleRun = scheduleRun.AddDays(everyNum);
-                }
                 else if (CB_repeadScheduleKind.SelectedIndex == 2)
-                {
                     scheduleRun = scheduleRun.AddDays(everyNum * 7);
-                }
+
                 SaveXML();
             }
             timerSchedule.Enabled = true;
@@ -164,25 +154,15 @@ namespace BackupMyMail.Gui
                 B_terminateBackupNow.Enabled = false;
                 B_startBackupNow.Enabled = true;
 
-                if (scheduleRun != null &&
-                scheduleRun.Year != 1999)
+                if (scheduleRun != null && scheduleRun.Year != DateTime.MinValue.Year)
                 {
-                    if (scheduleRun.Year == 0001)
-                    {
-                        this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                        this.Icon = new Icon(GetType(), "normal.ico");
-                    }
+                    if (scheduleRun < DateTime.Now)
+                        SetNormalIcon();
                     else
-                    {
-                        this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
-                        this.Icon = new Icon(GetType(), "schedule.ico");
-                    }
+                        SetScheduleIcon();
                 }
                 else
-                {
-                    this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                    this.Icon = new Icon(GetType(), "normal.ico");
-                }
+                    SetNormalIcon();
 
                 if (backupRunning)
                 {
@@ -196,18 +176,10 @@ namespace BackupMyMail.Gui
                 B_startBackupNow.Enabled = true;
                 B_terminateBackupNow.Enabled = false;
 
-                if (scheduleRun != null &&
-                scheduleRun.Year != 1999 &&
-                scheduleRun.Year != 0001)
-                {
-                    this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
-                    this.Icon = new Icon(GetType(), "schedule.ico");
-                }
+                if (scheduleRun != null && scheduleRun.Year != DateTime.MinValue.Year)
+                    SetScheduleIcon();
                 else
-                {
-                    this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                    this.Icon = new Icon(GetType(), "normal.ico");
-                }
+                    SetNormalIcon();
             }
 
             if (String.Compare(manager.ErrorCode, "null", false) == 0 || manager.ErrorCode == null)
@@ -216,18 +188,10 @@ namespace BackupMyMail.Gui
             timer.Stop();
             actualState = "Error!, action terminated!";
             L_actualState.Text = actualState;
-            if (scheduleRun != null &&
-            scheduleRun.Year != 1999 &&
-            scheduleRun.Year != 0001)
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
-                this.Icon = new Icon(GetType(), "schedule.ico");
-            }
+            if (scheduleRun != null && scheduleRun.Year != DateTime.MinValue.Year)
+                SetScheduleIcon();
             else
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                this.Icon = new Icon(GetType(), "normal.ico");
-            }
+                SetNormalIcon();
 
             manager.TerminateBackup();
             B_startBackupNow.Enabled = true;
@@ -264,18 +228,439 @@ namespace BackupMyMail.Gui
             BackupNow_Action();
         }
 
+        private void F_Main_Load(object sender, EventArgs e)
+        {
+            this.NI_F_Main.MouseClick += NI_F_Main_MouseClick;
+
+            if (minimalizeAfterStart)
+                this.WindowState = FormWindowState.Minimized;
+
+            Version version = Assembly.GetEntryAssembly().GetName().Version;
+            this.Text = this.Text + version.ToString();
+
+            ReadXML();
+            if (appSettingsVersion.CompareTo(new Version("1.3.2.3")) == -1)
+            {
+                //reorder save settings for older version < 1.3.2.3
+                SaveXML();
+                ReadXML();
+            }
+
+            executeProgramFolder = Path.GetDirectoryName(Application.ExecutablePath);
+            manager = new Manager(executeProgramFolder);
+
+            TB_pathToLogFile.Text = pathToLog;
+
+            B_terminateBackupNow.Enabled = false;
+
+            if (CB_afterBackupCloseComputer.Checked)
+                closeComputerAfterBackup = true;
+
+            if (CB_notUseVss.Checked)
+                notUseVss = true;
+
+            if (CB_minimalizeWindowOnStartup.Checked)
+            {
+                this.WindowState = FormWindowState.Minimized;
+                this.Hide();
+                this.ShowInTaskbar = false;
+            }
+
+            //set actual date
+            if (scheduleRun.Year < 2000)
+                SetDefaultScheduler();
+
+            if (String.Compare(L_actualScheduleSet.Text, "null", false) != 0)
+                return;
+
+            B_editSchedule.Enabled = false;
+            B_removeSchedule.Enabled = false;
+        }
+
+        void NI_F_Main_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+                this.BringToFront();
+            }
+        }
+
+        private void B_terminateCopy_Click(object sender, EventArgs e)
+        {
+            if (procCopy.IsAlive)
+            {
+                procCopy.Abort();
+                copyState = true;
+                MessageBox.Show("Terminate Copy done successfull!",
+                                "Terminate Copy",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Not terminate copy, becouse copy not running now!",
+                                "Terminate Copy",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+            }
+        }
+
+        private void CB_autoStartApp_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CB_autoStartApp.Checked)
+                CreateAutostartTask();
+            else
+                DeleteAutostartTask();
+        }
+
+        private void CB_notUseVss_CheckedChanged(object sender, EventArgs e)
+        {
+            notUseVss = CB_notUseVss.Checked ? true : false;
+        }
+
+        private void B_terminateBackupNow_Click(object sender, EventArgs e)
+        {
+            TerminateBackup_Action();
+        }
+
+        private void F_Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SaveXML();
+            this.WindowState = FormWindowState.Minimized;
+
+            if (!closeProgram)
+                e.Cancel = true; //abort closing
+            else
+            {
+                TerminateBackup_Action();
+                timer.Stop();
+                timerSchedule.Stop();
+            }
+        }
+
+        private void CB_afterBackupCloseComputer_CheckedChanged(object sender, EventArgs e)
+        {
+            closeComputerAfterBackup = CB_afterBackupCloseComputer.Checked ? true : false;
+        }
+
+        private void SWTSMI_showWindow_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+        }
+
+        private void SWTSMI_closeProgram_Click(object sender, EventArgs e)
+        {
+            TerminateBackup_Action();
+            closeProgram = true;
+            this.Close();
+        }
+
+        private void F_Main_Resize(object sender, EventArgs e)
+        {
+            if (WindowState != FormWindowState.Minimized)
+                return;
+
+            this.Hide();
+            this.ShowInTaskbar = false;
+        }
+
+        private void NI_F_Main_DoubleClick(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+        }
+
+        private void SWTSMI_backupNow_Click(object sender, EventArgs e)
+        {
+            BackupNow_Action();
+        }
+
+        private void LL_homeWebsite_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/MarekOtulakowski/backupmymail");
+        }
+
+        private void B_addSchedule_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(TB_pathToBackupOutputFolder.Text))
+            {
+                MessageBox.Show("Cannot add schedule if path to backup folder is empty!",
+                "Add schedule time",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!IsDirectoryAccessibleRW(folderBackup))
+            {
+                //directory isn't accessible
+                MessageBox.Show("Cannot add schedule if folder backup isn't accessible with Read-Write laws!",
+                "Add schedule time",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+                return;
+            }
+
+            var userChooseDateAndTime = new DateTime(DTP_startScheduleDate.Value.Year,
+                        DTP_startScheduleDate.Value.Month,
+                        DTP_startScheduleDate.Value.Day,
+                        Int32.Parse(NUD_startHourSchedule.Value.ToString()),
+                        Int32.Parse(NUD_startMinuteSchedule.Value.ToString()),
+                        0);
+
+            if (userChooseDateAndTime < DateTime.Now)
+            {
+                MessageBox.Show("Cannot add schedule eariel then date-time now!",
+                "Add schedule time",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+                return;
+            }
+
+            scheduleRun = userChooseDateAndTime;
+            SaveXML();
+
+            L_actualScheduleSet.Text = !CB_repeatEvery.Checked ? "At " +
+                scheduleRun.Hour + ":" +
+                scheduleRun.Minute +
+                " , starting: " +
+                scheduleRun.Month + "/" +
+                scheduleRun.Day + "/" +
+                scheduleRun.Year +
+                "\nRun Backup with actual backup path" : "At " +
+                scheduleRun.Hour + ":" +
+                scheduleRun.Minute +
+                ", every " +
+                NUD_repeatEveryNum.Value + " " +
+                CB_repeadScheduleKind.SelectedItem +
+                ", starting: " +
+                scheduleRun.Month + "/" +
+                scheduleRun.Day + "/" +
+                scheduleRun.Year +
+                " \nRun Backup with actual backup path";
+
+            if (scheduleRun != null)
+            {
+                B_addSchedule.Enabled = false;
+                B_editSchedule.Enabled = true;
+                B_removeSchedule.Enabled = true;
+            }
+
+            if (String.Compare(actualState, "Backup in progress...", false) == 0)
+                SetWorkingIcon();
+            else
+                SetScheduleIcon();
+        }
+
+        private void SetWorkingIcon()
+        {
+            this.NI_F_Main.Icon = new Icon(GetType(), "Icons.working.ico");
+            this.Icon = new Icon(GetType(), "Icons.working.ico");
+        }
+
+        private void SetScheduleIcon()
+        {
+            this.NI_F_Main.Icon = new Icon(GetType(), "Icons.schedule.ico");
+            this.Icon = new Icon(GetType(), "Icons.schedule.ico");
+        }
+
+        private void SetNormalIcon()
+        {
+            this.NI_F_Main.Icon = new Icon(GetType(), "Icons.normal.ico");
+            this.Icon = new Icon(GetType(), "Icons.normal.ico");
+        }
+
+        private void B_removeSchedule_Click(object sender, EventArgs e)
+        {
+            SetDefaultScheduler();
+
+            scheduleRun = DateTime.MinValue;
+            L_actualScheduleSet.Text = "null";
+            B_addSchedule.Enabled = true;
+            B_editSchedule.Enabled = false;
+            B_removeSchedule.Enabled = false;
+
+            if (String.Compare(actualState, "Backup in progress...", false) == 0)
+                SetWorkingIcon();
+            else
+                SetNormalIcon();
+
+            SaveXML();
+        }
+
+        private void B_editSchedule_Click(object sender, EventArgs e)
+        {
+            if (scheduleRun == null || scheduleRun.Year == DateTime.MinValue.Year)
+                return;
+
+            DTP_startScheduleDate.Value = scheduleRun.AddHours(1);
+            NUD_startHourSchedule.Value = scheduleRun.Hour;
+            NUD_startMinuteSchedule.Value = scheduleRun.Minute;
+
+            B_addSchedule.Enabled = true;
+            B_editSchedule.Enabled = false;
+            B_removeSchedule.Enabled = true;
+        }
+
+        private void B_browseLogFile_Click(object sender, EventArgs e)
+        {
+            using (var sfd = new SaveFileDialog())
+            {
+                if (!string.IsNullOrEmpty(pathToLog))
+                    sfd.InitialDirectory = pathToLog.Substring(0, pathToLog.LastIndexOf("\\"));
+
+                sfd.Filter = "txt files (*.txt)|*.txt";
+                var dr = sfd.ShowDialog();
+                if (dr != System.Windows.Forms.DialogResult.OK)
+                    return;
+                pathToLog = sfd.FileName;
+                TB_pathToLogFile.Text = pathToLog;
+            }
+        }
+
+        private void B_browseRegOutlookRestore_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = System.Environment.SpecialFolder.Desktop.ToString();
+            ofd.Filter = "Registry files (*.reg)|*.reg";
+            DialogResult dr = ofd.ShowDialog();
+
+            if (dr == System.Windows.Forms.DialogResult.OK)
+                TB_pathToRegOutlookRestore.Text = ofd.FileName;
+        }
+
+        private void B_restoreOutlookRegistry_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(TB_pathToRegOutlookRestore.Text.Trim()))
+            {
+                MessageBox.Show("Path to *.reg file is empty",
+                                "Import fail!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                return;
+            }
+            if (!File.Exists(TB_pathToRegOutlookRestore.Text.Trim()))
+            {
+                MessageBox.Show("File doesn't exists",
+                                "Import fail!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                return;
+            }
+
+            string command = @"/s " + TB_pathToRegOutlookRestore.Text;
+            var psiRestoreReg = new ProcessStartInfo();
+            if (System.Environment.OSVersion.Version.Major >= 6)
+                psiRestoreReg.Verb = "runas";
+            psiRestoreReg.FileName = "regedit.exe";
+            psiRestoreReg.Arguments = command;
+            if (Environment.OSVersion.Version.Major >= 6)
+            {
+                psiRestoreReg.Verb = "runas";
+                psiRestoreReg.UseShellExecute = true;
+            }
+            else
+                psiRestoreReg.UseShellExecute = true;
+
+            System.Diagnostics.Process pRestoreReg = Process.Start(psiRestoreReg);
+            pRestoreReg.WaitForExit();
+            if (!pRestoreReg.HasExited)
+                pRestoreReg.Kill();
+
+            MessageBox.Show("Import from file: " + TB_pathToRegOutlookRestore.Text + " done successfull!",
+                            "Import profile from file",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+
+            TB_pathToRegOutlookRestore.Text = string.Empty;
+        }
+
+        private void B_browsePathToPstInfo_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = System.Environment.SpecialFolder.Desktop.ToString();
+            ofd.Filter = "Xml files (*.xml)|*.xml";
+            DialogResult dr = ofd.ShowDialog();
+
+            if (dr == System.Windows.Forms.DialogResult.OK)
+                TB_pathToPstInfo.Text = ofd.FileName;
+        }
+
+        private void B_readPstInfo_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(TB_pathToPstInfo.Text.Trim()))
+            {
+                MessageBox.Show("Path to *.xml file is empty",
+                                "Read file fail!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                return;
+            }
+            if (!File.Exists(TB_pathToPstInfo.Text.Trim()))
+            {
+                MessageBox.Show("File doesn't exists",
+                                "Read file fail!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                return;
+            }
+
+            if (ReadXmlPstInfo(TB_pathToPstInfo.Text))
+                GB_restorePstS.Enabled = true;
+        }
+
+        private void B_restoreDefaultPST_Click(object sender, EventArgs e)
+        {
+            if (!CloseRunningMSOutlook()) return;
+
+            pstPathOrg = L_pathToDefaultPst.Text;
+            if (procCopy != null) procCopy = null;
+            procCopy = new Thread(CopyOnlyDefaultPst);
+            copyState = true;
+            procCopy.Start();
+        }
+
+        private void B_restoreDefaultPstAndArchivePstS_Click(object sender, EventArgs e)
+        {
+            if (!CloseRunningMSOutlook()) return;
+
+            pstPathOrg = L_pathToDefaultPst.Text;
+            if (procCopy != null) procCopy = null;
+            procCopy = new Thread(CopyAllPst);
+            copyState = true;
+            procCopy.Start();
+        }
+        #endregion
+
+        #region Methods
+        private void AfterStart()
+        {
+            timer = new System.Windows.Forms.Timer() { Interval = 1000, Enabled = true };
+            timer.Tick += timer_Tick;
+            timer.Start();
+            timerSchedule = new System.Windows.Forms.Timer() { Interval = 1000, Enabled = true };
+            timerSchedule.Tick += timerSchedule_Tick;
+            timerSchedule.Start();
+
+            listPstArchiveOrg = new List<string>();
+            listPstBackupArchive = new List<string>();
+        }
+
         private void BackupNow_Action()
         {
             //close MS Outlook user choose for "not use vss service and hobocopy"
             bool runningOutlook = false;
             Process[] currentProcesses = Process.GetProcesses();
             foreach (var cProcess in currentProcesses)
-	        {
+            {
                 if (cProcess.ProcessName.Trim().Contains("OUTLOOK"))
-                {
                     runningOutlook = true;
-                }
-	        }
+            }
 
             if (runningOutlook)
             {
@@ -330,14 +715,11 @@ namespace BackupMyMail.Gui
             proc.Start();
 
             if (!timer.Enabled)
-            {
                 timer.Start();
-            }
 
             actualState = "Backup in progress...";
             B_terminateBackupNow.Enabled = true;
-            this.NI_F_Main.Icon = new Icon(GetType(), "working.ico");
-            this.Icon = new Icon(GetType(), "working.ico");
+            SetWorkingIcon();
 
             backupRunning = true;
         }
@@ -352,77 +734,10 @@ namespace BackupMyMail.Gui
                 actualState = "Backup successfull!";
 
                 if (closeComputerAfterBackup)
-                {
                     CloseComputer();
-                }
             }
             else
-            {
                 actualState = "Terminate backup successfull!";
-            }
-        }
-
-        private void F_Main_Load(object sender, EventArgs e)
-        {
-            this.NI_F_Main.MouseClick += NI_F_Main_MouseClick;
-
-            if (minimalizeAfterStart)
-                this.WindowState = FormWindowState.Minimized;
-
-            Version version = Assembly.GetEntryAssembly().GetName().Version;
-            this.Text = this.Text + version.ToString();
-            
-            ReadXML();
-            if (appSettingsVersion.CompareTo(new Version("1.3.2.3")) == -1)
-            {
-                //reorder save settings for older version < 1.3.2.3
-                SaveXML();
-                ReadXML();
-            }
-
-            executeProgramFolder = Path.GetDirectoryName(Application.ExecutablePath);
-            manager = new Manager(executeProgramFolder);
-
-            TB_pathToLogFile.Text = pathToLog;
-
-            B_terminateBackupNow.Enabled = false;
-
-            if (CB_afterBackupCloseComputer.Checked)
-            {
-                closeComputerAfterBackup = true;
-            }
-
-            if (CB_notUseVss.Checked)
-            {
-                notUseVss = true;
-            }
-
-            if (CB_minimalizeWindowOnStartup.Checked)
-            {
-                this.WindowState = FormWindowState.Minimized;
-                this.Hide();
-                this.ShowInTaskbar = false;
-            }
-
-            //set actual date
-            if (scheduleRun.Year < 2000)
-                SetDefaultScheduler();
-
-            if (String.Compare(L_actualScheduleSet.Text, "null", false) != 0)
-                return;
-
-            B_editSchedule.Enabled = false;
-            B_removeSchedule.Enabled = false;
-        }
-
-        void NI_F_Main_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                this.Show();
-                this.WindowState = FormWindowState.Normal;
-                this.BringToFront();
-            }
         }
 
         private void SetDefaultScheduler()
@@ -448,11 +763,6 @@ namespace BackupMyMail.Gui
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
             }
-        }
-
-        private void B_terminateBackupNow_Click(object sender, EventArgs e)
-        {
-            TerminateBackup_Action();
         }
 
         private void TerminateBackup_Action()
@@ -494,37 +804,12 @@ namespace BackupMyMail.Gui
             B_terminateBackupNow.Enabled = false;
 
             if (timer.Enabled)
-            {
                 timer.Stop();
-            }
 
-            if (scheduleRun != null &&
-            scheduleRun.Year != 1999 &&
-            scheduleRun.Year != 0001)
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
-                this.Icon = new Icon(GetType(), "schedule.ico");
-            }
+            if (scheduleRun != null && scheduleRun.Year != DateTime.MinValue.Year)
+                SetScheduleIcon();
             else
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                this.Icon = new Icon(GetType(), "normal.ico");
-            }
-        }
-
-        private void F_Main_FormClosing(object sender, FormClosingEventArgs e)
-        {           
-            SaveXML();
-            this.WindowState = FormWindowState.Minimized;
-
-            if (!closeProgram)
-                e.Cancel = true; //abort closing
-            else
-            {
-                TerminateBackup_Action();
-                timer.Stop();
-                timerSchedule.Stop();
-            }
+                SetNormalIcon();
         }
 
         private bool IsSetAutostartApp()
@@ -556,9 +841,9 @@ namespace BackupMyMail.Gui
             }
             catch
             {
-                MessageBox.Show("Error reading is task exist", 
-                    "BackupMyMail", 
-                    MessageBoxButtons.OK, 
+                MessageBox.Show("Error reading is task exist",
+                    "BackupMyMail",
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
 
@@ -644,9 +929,7 @@ namespace BackupMyMail.Gui
             try
             {
                 if (File.Exists(pathToSettings))
-                {
                     File.Delete(pathToSettings);
-                }
 
                 bool deleteAllPstFromBackupFolder = false;
                 if (CB_deleteAllPstFileFromBackup.Checked)
@@ -701,20 +984,20 @@ namespace BackupMyMail.Gui
                     textWriter.WriteStartElement("ApplicationSettings");
                     textWriter.WriteAttributeString("Version", version.ToString());
                     textWriter.WriteWhitespace(Environment.NewLine);
-                    textWriter.WriteWhitespace("   ");                    
+                    textWriter.WriteWhitespace("   ");
                     textWriter.WriteStartElement("EnableRepeat", enableRepeat.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("FolderBackup", TB_pathToBackupOutputFolder.Text);                    
+                    textWriter.WriteStartElement("FolderBackup", TB_pathToBackupOutputFolder.Text);
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("RepeatKind", repeatKind.ToString());                    
+                    textWriter.WriteStartElement("RepeatKind", repeatKind.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("RepeatNumber", repeatNumber.ToString());                    
+                    textWriter.WriteStartElement("RepeatNumber", repeatNumber.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
@@ -750,7 +1033,7 @@ namespace BackupMyMail.Gui
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteWhitespace("   ");
-                    textWriter.WriteStartElement("ScheduleTime", scheduleRun.ToString());                    
+                    textWriter.WriteStartElement("ScheduleTime", scheduleRun.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteEndElement();
@@ -771,9 +1054,7 @@ namespace BackupMyMail.Gui
             try
             {
                 if (!File.Exists(pathToSettings))
-                {
                     return false;
-                }
 
                 using (var reader = new XmlTextReader(pathToSettings))
                 {
@@ -835,56 +1116,36 @@ namespace BackupMyMail.Gui
                                     try
                                     {
                                         scheduleRun = DateTime.Parse(reader.NamespaceURI);
-                                        DTP_startScheduleDate.Value = scheduleRun.Date;
-                                        NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
-                                        NUD_startMinuteSchedule.Value = (decimal)scheduleRun.Minute;
+                                        SetControlsTime();
 
                                         if (!SetNextScheduler())
                                         {
-                                            L_actualScheduleSet.Text = string.Empty;                                         
+                                            L_actualScheduleSet.Text = string.Empty;
                                         }
 
                                         if (scheduleRun > DateTime.Now)
                                         {
-                                            DTP_startScheduleDate.Value = scheduleRun.Date;
-                                            NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
-                                            NUD_startMinuteSchedule.Value = (decimal)scheduleRun.Minute;
-                                            this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
-                                            this.Icon = new Icon(GetType(), "schedule.ico");
+                                            SetControlsTime();
+                                            SetScheduleIcon();
                                         }
                                         else
-                                        {
-                                            this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                                            this.Icon = new Icon(GetType(), "normal.ico");
-                                        }
+                                            SetNormalIcon();
                                     }
                                     catch { }
                                 }
                             }
                             if (String.Compare(reader.Name, "NotUseVss", false) == 0)
-                            {
-                                CB_notUseVss.Checked = bool.Parse(reader.NamespaceURI) ? true : false;
-                            }
+                                  CB_notUseVss.Checked = bool.Parse(reader.NamespaceURI) ? true : false;
                             if (string.Compare(reader.Name, "DeleteAllPstFromBackupFolder", false) == 0)
-                            {
                                 CB_deleteAllPstFileFromBackup.Checked = bool.Parse(reader.NamespaceURI) ? true : false;
-                            }
                             if (String.Compare(reader.Name, "AfterBackupCloseComputer", false) == 0)
-                            {
                                 CB_afterBackupCloseComputer.Checked = bool.Parse(reader.NamespaceURI) ? true : false;
-                            }
                             if (String.Compare(reader.Name, "MinimalizeWindowOnStartUp", false) == 0)
-                            {
                                 CB_minimalizeWindowOnStartup.Checked = bool.Parse(reader.NamespaceURI) ? true : false;
-                            }
                             if (String.Compare(reader.Name, "CopyRegistrySettings", false) == 0)
-                            {
                                 CB_copyRegistrySettings.Checked = bool.Parse(reader.NamespaceURI) ? true : false;
-                            }
                             if (String.Compare(reader.Name, "PathToLog", false) == 0)
-                            {
                                 pathToLog = reader.NamespaceURI;
-                            }
                             if (String.Compare(reader.Name, "Autostart", false) == 0)
                             {
                                 autostart = bool.Parse(reader.NamespaceURI);
@@ -903,6 +1164,13 @@ namespace BackupMyMail.Gui
             {
                 return false;
             }
+        }
+
+        private void SetControlsTime()
+        {
+            DTP_startScheduleDate.Value = scheduleRun.Date;
+            NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
+            NUD_startMinuteSchedule.Value = (decimal)scheduleRun.Minute;
         }
 
         private bool IsDirectoryAccessibleRW(string path)
@@ -927,12 +1195,11 @@ namespace BackupMyMail.Gui
             if (string.IsNullOrEmpty(folderBackup)) return false; //path to folder backup is empty
             if (!IsDirectoryAccessibleRW(folderBackup)) return false; //directory isn't accessible
 
-            //int maxIterations = 0;
             while (scheduleRun < DateTime.Now)
             {
                 //for safe (badly settings in file)
                 if (repeatNumber < 1) break;
-                if (repeatKind < 1 || repeatKind > 2) break;
+                if (repeatKind < 0 || repeatKind > 2) break;
 
                 //repeatKind => 0 - hour, 1 - day, 2 - weekday
                 if (repeatKind == 0)
@@ -941,23 +1208,15 @@ namespace BackupMyMail.Gui
                     NUD_startHourSchedule.Value = (decimal)scheduleRun.Hour;
                 }
                 else if (repeatKind == 1)
-                {
-                    scheduleRun = scheduleRun.AddDays(repeatNumber);                  
-                }
+                    scheduleRun = scheduleRun.AddDays(repeatNumber);
                 else if (repeatKind == 2)
-                {
                     scheduleRun = scheduleRun.AddDays(repeatNumber * 7);
-                }
-                DTP_startScheduleDate.Value = scheduleRun;
 
-                ////for safe (badly settings in file)
-                //if (++maxIterations > 100) break;
+                DTP_startScheduleDate.Value = scheduleRun;
             }
 
             if (scheduleRun < DateTime.Now)
-            {
                 return false;
-            }
 
             return true;
         }
@@ -966,286 +1225,9 @@ namespace BackupMyMail.Gui
         {
             System.Security.SecureString secureString = new System.Security.SecureString();
             foreach (char c in input.ToCharArray())
-            {
                 secureString.AppendChar(c);
-            }
+
             return secureString;
-        }
-
-        private void CB_afterBackupCloseComputer_CheckedChanged(object sender, EventArgs e)
-        {
-            closeComputerAfterBackup = CB_afterBackupCloseComputer.Checked ? true : false;
-        }
-
-        private void SWTSMI_showWindow_Click(object sender, EventArgs e)
-        {
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
-            this.ShowInTaskbar = true;
-        }
-
-        private void SWTSMI_closeProgram_Click(object sender, EventArgs e)
-        {
-            TerminateBackup_Action();
-            closeProgram = true;
-            this.Close();
-        }
-
-        private void F_Main_Resize(object sender, EventArgs e)
-        {
-            if (WindowState != FormWindowState.Minimized)
-                return;
-
-            this.Hide();
-            this.ShowInTaskbar = false;
-        }
-
-        private void NI_F_Main_DoubleClick(object sender, EventArgs e)
-        {
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
-            this.ShowInTaskbar = true;
-        }
-
-        private void SWTSMI_backupNow_Click(object sender, EventArgs e)
-        {
-            BackupNow_Action();
-        }
-
-        private void LL_homeWebsite_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start("https://github.com/MarekOtulakowski/backupmymail");
-        }
-
-        private void B_addSchedule_Click(object sender, EventArgs e)
-        {            
-            if (string.IsNullOrEmpty(TB_pathToBackupOutputFolder.Text))
-            {
-                MessageBox.Show("Cannot add schedule if path to backup folder is empty!",
-                "Add schedule time",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!IsDirectoryAccessibleRW(folderBackup))
-            {
-                //directory isn't accessible
-                MessageBox.Show("Cannot add schedule if folder backup isn't accessible with Read-Write laws!",
-                "Add schedule time",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-                return;
-            } 
-
-            var userChooseDateAndTime = new DateTime(DTP_startScheduleDate.Value.Year,
-                        DTP_startScheduleDate.Value.Month,
-                        DTP_startScheduleDate.Value.Day,
-                        Int32.Parse(NUD_startHourSchedule.Value.ToString()),
-                        Int32.Parse(NUD_startMinuteSchedule.Value.ToString()),
-                        0);
-
-            if (userChooseDateAndTime < DateTime.Now)
-            {
-                MessageBox.Show("Cannot add schedule eariel then date-time now!",
-                "Add schedule time",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning);
-                return;
-            }
-
-            scheduleRun = userChooseDateAndTime;
-            SaveXML();
-
-            L_actualScheduleSet.Text = !CB_repeatEvery.Checked ? "At " +
-                scheduleRun.Hour + ":" +
-                scheduleRun.Minute +
-                " , starting: " +
-                scheduleRun.Month + "/" +
-                scheduleRun.Day + "/" +
-                scheduleRun.Year +
-                "\nRun Backup with actual backup path" : "At " +
-                scheduleRun.Hour + ":" +
-                scheduleRun.Minute +
-                ", every " +
-                NUD_repeatEveryNum.Value + " " +
-                CB_repeadScheduleKind.SelectedItem +
-                ", starting: " +
-                scheduleRun.Month + "/" +
-                scheduleRun.Day + "/" +
-                scheduleRun.Year +
-                " \nRun Backup with actual backup path";
-
-            if (scheduleRun != null)
-            {
-                B_addSchedule.Enabled = false;
-                B_editSchedule.Enabled = true;
-                B_removeSchedule.Enabled = true;
-            }
-
-            if (String.Compare(actualState, "Backup in progress...", false) == 0)
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "working.ico");
-                this.Icon = new Icon(GetType(), "working.ico");
-            }
-            else
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "schedule.ico");
-                this.Icon = new Icon(GetType(), "schedule.ico");
-            }
-        }
-
-        private void B_removeSchedule_Click(object sender, EventArgs e)
-        {
-            SetDefaultScheduler();
-
-            scheduleRun = new DateTime(1999, 1, 1, 0, 0, 0);
-            L_actualScheduleSet.Text = "null";
-            B_addSchedule.Enabled = true;
-            B_editSchedule.Enabled = false;
-            B_removeSchedule.Enabled = false;
-
-            if (String.Compare(actualState, "Backup in progress...", false) == 0)
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "working.ico");
-                this.Icon = new Icon(GetType(), "working.ico");
-            }
-            else
-            {
-                this.NI_F_Main.Icon = new Icon(GetType(), "normal.ico");
-                this.Icon = new Icon(GetType(), "normal.ico");
-            }
-            SaveXML();
-        }
-
-        private void B_editSchedule_Click(object sender, EventArgs e)
-        {
-            if (scheduleRun == null || scheduleRun.Year == 1999)
-                return;
-
-            DTP_startScheduleDate.Value = scheduleRun.AddHours(1);
-            NUD_startHourSchedule.Value = scheduleRun.Hour;
-            NUD_startMinuteSchedule.Value = scheduleRun.Minute;
-
-            B_addSchedule.Enabled = true;
-            B_editSchedule.Enabled = false;
-            B_removeSchedule.Enabled = true;
-        }
-
-        private void B_browseLogFile_Click(object sender, EventArgs e)
-        {
-            using (var sfd = new SaveFileDialog())
-            {
-                if (!string.IsNullOrEmpty(pathToLog))
-                {
-                    sfd.InitialDirectory = pathToLog.Substring(0, pathToLog.LastIndexOf("\\"));
-                }
-                sfd.Filter = "txt files (*.txt)|*.txt";
-                var dr = sfd.ShowDialog();
-                if (dr != System.Windows.Forms.DialogResult.OK)
-                    return;
-                pathToLog = sfd.FileName;
-                TB_pathToLogFile.Text = pathToLog;
-            }
-        }
-
-        private void B_browseRegOutlookRestore_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = System.Environment.SpecialFolder.Desktop.ToString();
-            ofd.Filter = "Registry files (*.reg)|*.reg";
-            DialogResult dr = ofd.ShowDialog();
-
-            if (dr == System.Windows.Forms.DialogResult.OK)
-            {
-                TB_pathToRegOutlookRestore.Text = ofd.FileName;
-            }
-        }
-
-        private void B_restoreOutlookRegistry_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(TB_pathToRegOutlookRestore.Text.Trim()))
-            {
-                MessageBox.Show("Path to *.reg file is empty",
-                                "Import fail!",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                return;
-            }
-            if (!File.Exists(TB_pathToRegOutlookRestore.Text.Trim()))
-            {
-                MessageBox.Show("File doesn't exists",
-                                "Import fail!",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                return;
-            }
-
-            string command = @"/s " + TB_pathToRegOutlookRestore.Text;
-            var psiRestoreReg = new ProcessStartInfo();
-            if (System.Environment.OSVersion.Version.Major >= 6)
-                psiRestoreReg.Verb = "runas";
-            psiRestoreReg.FileName = "regedit.exe";
-            psiRestoreReg.Arguments = command;
-            if (Environment.OSVersion.Version.Major >= 6)
-            {
-                psiRestoreReg.Verb = "runas";
-                psiRestoreReg.UseShellExecute = true;
-            }
-            else
-            {
-                psiRestoreReg.UseShellExecute = true;
-            }
-
-            System.Diagnostics.Process pRestoreReg = Process.Start(psiRestoreReg);
-            pRestoreReg.WaitForExit();
-            if (!pRestoreReg.HasExited)
-            {
-                pRestoreReg.Kill();
-            }
-
-            MessageBox.Show("Import from file: " + TB_pathToRegOutlookRestore.Text + " done successfull!",
-                            "Import profile from file",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
-
-            TB_pathToRegOutlookRestore.Text = string.Empty;
-        }
-
-        private void B_browsePathToPstInfo_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = System.Environment.SpecialFolder.Desktop.ToString();
-            ofd.Filter = "Xml files (*.xml)|*.xml";
-            DialogResult dr = ofd.ShowDialog();
-
-            if (dr == System.Windows.Forms.DialogResult.OK)
-            {
-                TB_pathToPstInfo.Text = ofd.FileName;
-            }
-        }
-
-        private void B_readPstInfo_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(TB_pathToPstInfo.Text.Trim()))
-            {
-                MessageBox.Show("Path to *.xml file is empty",
-                                "Read file fail!",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                return;
-            }
-            if (!File.Exists(TB_pathToPstInfo.Text.Trim()))
-            {
-                MessageBox.Show("File doesn't exists",
-                                "Read file fail!",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                return;
-            }
-
-            if (ReadXmlPstInfo(TB_pathToPstInfo.Text))
-                GB_restorePstS.Enabled = true;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
@@ -1263,21 +1245,13 @@ namespace BackupMyMail.Gui
                         if (nType == XmlNodeType.Element)
                         {
                             if (String.Compare(reader.Name, "MainPst", false) == 0)
-                            {
                                 L_pathToDefaultPst.Text = reader.NamespaceURI;
-                            }
                             else if (String.Compare(reader.Name, "ArchivePst", false) == 0)
-                            {
                                 listPstArchiveOrg.Add(reader.NamespaceURI);
-                            }
                             else if (String.Compare(reader.Name, "BackupMainPst", false) == 0)
-                            {
                                 pathToBackupMainPst = reader.NamespaceURI;
-                            }
                             else if (String.Compare(reader.Name, "BackupArchivePst", false) == 0)
-                            {
                                 listPstBackupArchive.Add(reader.NamespaceURI);
-                            }
                         }
                     }
                     reader.Close();
@@ -1300,9 +1274,7 @@ namespace BackupMyMail.Gui
                 foreach (var cProcess in currentProcesses)
                 {
                     if (cProcess.ProcessName.Trim().Contains("OUTLOOK"))
-                    {
                         runningOutlook = true;
-                    }
                 }
 
                 if (runningOutlook)
@@ -1335,36 +1307,13 @@ namespace BackupMyMail.Gui
             }
         }
 
-        private void B_restoreDefaultPST_Click(object sender, EventArgs e)
-        {
-            if (!CloseRunningMSOutlook()) return;
-
-            pstPathOrg = L_pathToDefaultPst.Text;
-            if (procCopy != null) procCopy = null;
-            procCopy = new Thread(CopyOnlyDefaultPst);
-            copyState = true;
-            procCopy.Start();
-        }
-
-        private string pstPathOrg;
-        private void B_restoreDefaultPstAndArchivePstS_Click(object sender, EventArgs e)
-        {
-            if (!CloseRunningMSOutlook()) return;
-
-            pstPathOrg = L_pathToDefaultPst.Text;
-            if (procCopy != null) procCopy = null;
-            procCopy = new Thread(CopyAllPst);
-            copyState = true;
-            procCopy.Start();
-        }
-
         private void CopyOnlyDefaultPst()
         {
             try
             {
                 File.Copy(pathToBackupMainPst, pstPathOrg, true);
             }
-            catch 
+            catch
             {
             }
         }
@@ -1384,9 +1333,7 @@ namespace BackupMyMail.Gui
                 for (int i = 0; i < listPstArchiveOrg.Count; i++)
                 {
                     if (!Directory.Exists(listPstArchiveOrg[i].Substring(0, listPstArchiveOrg[i].LastIndexOf("\\"))))
-                    {
                         Directory.CreateDirectory(listPstArchiveOrg[i].Substring(0, listPstArchiveOrg[i].LastIndexOf("\\")));
-                    }
 
                     File.Copy(listPstBackupArchive[i], listPstArchiveOrg[i], true);
                 }
@@ -1394,39 +1341,7 @@ namespace BackupMyMail.Gui
             catch
             {
             }
-        }
-
-        private void B_terminateCopy_Click(object sender, EventArgs e)
-        {
-            if (procCopy.IsAlive)
-            {
-                procCopy.Abort();
-                copyState = true;
-                MessageBox.Show("Terminate Copy done successfull!",
-                                "Terminate Copy",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("Not terminate copy, becouse copy not running now!",
-                                "Terminate Copy",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-            }
-        }
-
-        private void CB_autoStartApp_CheckedChanged(object sender, EventArgs e)
-        {
-            if (CB_autoStartApp.Checked)
-                CreateAutostartTask();
-            else
-                DeleteAutostartTask();
-        }
-
-        private void CB_notUseVss_CheckedChanged(object sender, EventArgs e)
-        {
-            notUseVss = CB_notUseVss.Checked ? true : false;
-        }
+        } 
+        #endregion
     }
 }

@@ -56,7 +56,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>normal.ico</ApplicationIcon>
+    <ApplicationIcon>Icons\normal.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>1DAA2C843F06B5BB65D43415DD9288F0C8FB82D3</ManifestCertificateThumbprint>
@@ -75,7 +75,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>BackupMyMail.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Sign\BackupMyMail.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>BackupMyMail.Gui.Program</StartupObject>
@@ -119,7 +119,7 @@
       <DependentUpon>F_Main.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
-    <None Include="BackupMyMail.snk" />
+    <None Include="Sign\BackupMyMail.snk" />
     <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +129,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="normal.ico" />
-    <EmbeddedResource Include="schedule.ico" />
-    <EmbeddedResource Include="working.ico" />
+    <EmbeddedResource Include="Icons\normal.ico" />
+    <EmbeddedResource Include="Icons\schedule.ico" />
+    <EmbeddedResource Include="Icons\working.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -162,7 +162,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AboutSign.txt" />
+    <Content Include="Sign\AboutSign.txt" />
     <Content Include="HoboCopy-x64.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -172,7 +172,7 @@
     <Content Include="HoboCopy-x86.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="License.txt" />
+    <Content Include="Setup\License.txt" />
     <Content Include="Setup\innoSetup-script.iss" />
     <Content Include="Setup\SetupIcon.ico" />
   </ItemGroup>
