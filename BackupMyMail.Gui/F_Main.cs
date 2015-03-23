@@ -47,8 +47,8 @@ namespace BackupMyMail.Gui
         int repeatKind = 0;
         Version appSettingsVersion = new Version("0.0.0.0");
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern int GetSystemMetrics(int nIndex);
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1060:MovePInvokesToNativeMethodsClass"), DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        static extern int GetSystemMetrics(int nIndex);
 
         public F_Main(string[] args)
         {
@@ -638,6 +638,7 @@ namespace BackupMyMail.Gui
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         private void SaveXML()
         {
             try
@@ -756,6 +757,7 @@ namespace BackupMyMail.Gui
                     textWriter.WriteWhitespace(Environment.NewLine);
                     textWriter.WriteEndDocument();
                     textWriter.Close();
+                    textWriter.Flush();
                 }
             }
             catch
@@ -763,6 +765,7 @@ namespace BackupMyMail.Gui
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         private bool ReadXML()
         {
             try
@@ -1245,6 +1248,7 @@ namespace BackupMyMail.Gui
                 GB_restorePstS.Enabled = true;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         private bool ReadXmlPstInfo(string pathToSettings)
         {
             try

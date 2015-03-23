@@ -384,6 +384,7 @@ namespace BackupMyMail.Lib
             return result;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         private void SaveInfoAboutPstFiles()
         {
             try
