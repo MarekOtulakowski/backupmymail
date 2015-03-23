@@ -42,3 +42,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.exe
+/BackupMyMail.Lib/bin
+/BackupMyMail.Lib/obj
+/BackupMyMail.Gui/bin
+/BackupMyMail.Gui/obj
