@@ -5,5 +5,5 @@ This program copy all pst files from default Microsoft Outlook profile to backup
 * v.1.3.1 adding support for Microsoft Outlook 2013 (backup pst file only + backup key registy, different then eariel MS Outlook version) imported from old reposiotry http://backupmymail.codeplex.com
 * v1.3.3.0 signing OpenSource Developer certificatemore description here -> https://github.com/MarekOtulakowski/BackupMyMail/wiki
 
-# Latest releases
+# Download releases
 https://github.com/MarekOtulakowski/backupmymail/releases
