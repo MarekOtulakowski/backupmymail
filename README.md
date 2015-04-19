@@ -6,6 +6,3 @@ This program copy all pst files from default Microsoft Outlook profile to backup
 * v1.3.3.0 signing OpenSource Developer certificate
 ...
 more description here -> https://github.com/MarekOtulakowski/BackupMyMail/wiki
-
-# Old versions
-Older versions of program (< 1.3.1) there are earlier hosting https://backupmymail.codeplex.com/
