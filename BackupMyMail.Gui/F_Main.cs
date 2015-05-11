@@ -226,6 +226,10 @@ namespace BackupMyMail.Gui
 
         private void B_startBackupNow_Click(object sender, EventArgs e)
         {
+            B_startBackupNow.Enabled = false;
+            if (manager != null) manager = null;
+
+            manager = new Manager(executeProgramFolder);
             BackupNow_Action();
         }
 
@@ -324,6 +328,7 @@ namespace BackupMyMail.Gui
         private void B_terminateBackupNow_Click(object sender, EventArgs e)
         {
             TerminateBackup_Action();
+            B_startBackupNow.Enabled = true;
         }
 
         private void F_Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -654,6 +659,8 @@ namespace BackupMyMail.Gui
 
         private void BackupNow_Action()
         {
+            manager.ErrorCode = null;
+
             //close MS Outlook user choose for "not use vss service and hobocopy"
             bool runningOutlook = false;
             Process[] currentProcesses = Process.GetProcesses();
@@ -684,7 +691,7 @@ namespace BackupMyMail.Gui
                     }
                     else return;
                 }
-            }
+            }            
 
             if (CB_deleteAllPstFileFromBackup.Checked)
             {
@@ -772,6 +779,7 @@ namespace BackupMyMail.Gui
             if (proc != null)
             {
                 proc.Abort();
+                System.Threading.Thread.Sleep(200);
 
                 if (!proc.IsAlive && resultTerminateFromLibrary)
                 {
@@ -782,10 +790,12 @@ namespace BackupMyMail.Gui
                 else
                 {
                     actualState = "Terminate backup in progress...";
-                    while (manager.TerminateBackup())
-                    {
-                    }
-                    manager.ErrorCode = "null";
+                    manager.TerminateBackup();
+                    //while (!manager.TerminateBackup())
+                    //{
+                    //    System.Threading.Thread.Sleep(200);
+                    //}
+                    //manager.ErrorCode = "null";
                     while (proc.IsAlive)
                     {
                         proc.Abort();

@@ -477,8 +477,24 @@ namespace BackupMyMail.Lib
 
             try
             {
-                var psi = new ProcessStartInfo();
+                var psi = new ProcessStartInfo();                
                 GetHobocopyVersion(is64bit, psi);
+
+                List<int> processId = new List<int>();
+                foreach (Process process in Process.GetProcesses())
+                {
+                    if (process.ProcessName.ToLower().Contains("hobocopy"))
+                    {
+                        processId.Add(process.Id);
+                    }
+                }
+
+                while (processId.Count > 0)
+                {
+                    Process hobocopyProcess = Process.GetProcessById(processId[processId.Count - 1]);
+                    if (hobocopyProcess != null)
+                        hobocopyProcess.Kill();
+                }
 
                 string pstFileName = _pathToPst.Substring(_pathToPst.LastIndexOf("\\") + 1, _pathToPst.Length - _pathToPst.LastIndexOf("\\") - 1);
 
@@ -750,12 +766,14 @@ namespace BackupMyMail.Lib
                 p.Refresh();
                 p.Kill();
 
+                //System.Threading.Thread.Sleep(200);
+
                 if (p.HasExited)
                 {
                     result = true;
                 }
             }
-            catch
+            catch (Exception ex)
             {
             }
 
