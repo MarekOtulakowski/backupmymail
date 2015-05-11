@@ -50,6 +50,7 @@ namespace BackupMyMail.Gui
         int repeatKind = 0;
         Version appSettingsVersion = new Version("0.0.0.0");
         private string pstPathOrg = string.Empty;
+        bool useSaveAutostart = false;
         #endregion
 
         #region NativeMethods
@@ -327,7 +328,7 @@ namespace BackupMyMail.Gui
 
         private void F_Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveXML();
+            SaveXML(false);
             this.WindowState = FormWindowState.Minimized;
 
             if (!closeProgram)
@@ -923,6 +924,16 @@ namespace BackupMyMail.Gui
             }
         }
 
+        private void SaveXML(bool saveAutostart)
+        {
+            if (saveAutostart)
+                useSaveAutostart = true;
+            else
+                useSaveAutostart = false;
+
+            SaveXML();
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]
         private void SaveXML()
         {
@@ -956,7 +967,8 @@ namespace BackupMyMail.Gui
                     autostart = true;
 
                     //default option if user don't change control
-                    CreateAutostartTask();
+                    if (useSaveAutostart)
+                        CreateAutostartTask();
                 }
                 else
                     autostart = false;
